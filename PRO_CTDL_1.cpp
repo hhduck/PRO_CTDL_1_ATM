@@ -972,3 +972,78 @@ void docFileTheTu(List& l) {
     }
     in3.close();
 }
+
+int main() {
+    List Admin;
+
+    IntList(Admin);
+
+    ifstream in1("Admin.txt");
+    int i = 0;
+    string user, pass;
+    while (in1 >> user && in1 >> pass) {
+        Admin.setUseri(user, i);
+        Admin.setPassi(pass, i);
+        i++;
+    }
+    in1.close();
+
+    ifstream in2("[ID].txt");
+    ifstream in3("TheTu.txt");
+    string id, name, iso, id2, pin, khoa;
+    unsigned long money;
+    while (in2 >> id) {
+        in2.ignore();
+        getline(in2, name);
+        in2 >> money;
+        in2 >> iso;
+        in3 >> id2;
+
+        in3 >> pin;
+        in3 >> khoa;
+        if (pin == "") pin = "123456";
+        User tmp(id, pin, name, money, iso);
+        if (khoa == "1") tmp.setKhoa(true);
+        if (khoa == "0") tmp.setKhoa(false);
+        addCus(Admin, getNode(tmp));
+
+    }
+    in2.close();
+    in3.close();
+
+
+    ifstream in4("[LichSuID].txt");
+    while (in4 >> id) {
+        string tg, loai, tien, thongdiep = "";
+        in4.ignore();
+        getline(in4, tg);
+        getline(in4, loai);
+        in4 >> tien;
+
+        for (int j = 0; j < loai.size(); j++) {
+            if (loai[j] == ':') {
+                int q;
+                for (q = j + 1; q < loai.size(); q++) {
+                    thongdiep = thongdiep + loai[q];
+                }
+                loai.erase(loai.begin() + j, loai.begin() + q);
+                loai.erase(loai.begin() + loai.size() - 15, loai.begin() + loai.size());
+                break;
+            }
+        }
+        Node* p = Admin._pHead;
+        while (p != NULL) {
+            if (p->value.getID() == id) {
+                p->value.lsTG.push(tg);
+                p->value.lsLoaiGD.push(loai);
+                p->value.lsTien.push(tien);
+                p->value.lsTD.push(thongdiep);
+            }
+            p = p->_pNext;
+        }
+    }
+    in4.close();
+
+    capNhatFileID(Admin);
+    capNhatFileTheTu(Admin);
+    capNhatFileLichSu(Admin);
