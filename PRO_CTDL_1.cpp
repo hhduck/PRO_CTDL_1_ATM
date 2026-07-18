@@ -646,3 +646,262 @@ void MenuSanh() {
     cout << "| \t 3. Exit                      \t\t\  |" << endl;
     cout << "***************************************************" << endl;
 }
+
+void giaoDich(User& A, char ct, unsigned long tien, string loai, string thongdiep = "") {
+    A.lsTien.push(ct + to_string(tien));
+    A.lsLoaiGD.push(loai);
+
+    time_t now = time(0);
+    tm* ltm = localtime(&now);
+    string nam = to_string(1900 + ltm->tm_year);
+    string thang = to_string(1 + ltm->tm_mon);
+    string ngay = to_string(ltm->tm_mday);
+    string gio = to_string(ltm->tm_hour);
+    string phut = to_string(ltm->tm_min);
+    string giay = to_string(ltm->tm_sec);
+
+    A.lsTG.push(ngay + "/" + thang + "/" + nam + " " + gio + ":" + phut + ":" + giay);
+    A.lsTD.push(thongdiep);
+}
+
+void napTien(User& A) {
+    system("cls");
+    cout << "\t\t\t  <<>> NAP TIEN <<>> " << endl;
+    char tmp;
+    string menhgia;
+    int soto;
+    unsigned long tong = 0;
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    do {
+        SetConsoleTextAttribute(h, 2);
+        cout << "Vui long chon menh gia de nap (bam 0 de thoat ra va huy giao dich):" << endl;
+        cout << "(10.000, 20.000, 50.000, 100.000, 200.000, 500.000)VND: ";
+        do {
+            cin >> menhgia;
+            if (menhgia == "0") {
+                cout << "Quay lai Menu" << endl;
+                system("pause");
+                return;
+            }
+            if (menhgia != "10000" && menhgia != "20000" && menhgia != "50000" && menhgia != "100000" && menhgia != "200000" && menhgia != "500000") {
+                cout << "Ban da chon sai menh gia, vui long nhap lai." << endl;
+                cout << "(10.000, 20.000, 50.000, 100.000, 200.000, 500.000)VND: ";
+            }
+        } while (menhgia != "10000" && menhgia != "20000" && menhgia != "50000" && menhgia != "100000" && menhgia != "200000" && menhgia != "500000");
+
+        cout << "Nhap so to (1 - 100): ";
+        do {
+            cin >> soto;
+            if (soto <= 0 || soto >= 101) {
+                cout << "Ban da nhap sai so to, vui long nhap lai." << endl;
+                cout << "Nhap so to (1 - 100): ";
+            }
+        } while (soto <= 0 || soto >= 101);
+        tong += stoi(menhgia) * soto;
+
+        SetConsoleTextAttribute(h, 13);
+        cout << "Da nhan " << tong << " vao he thong ATM." << endl;
+        SetConsoleTextAttribute(h, 2);
+        cout << "Ban co muon nap them? [Y/N]: ";
+        cin >> tmp;
+    } while (tmp == 'y' || tmp == 'Y');
+
+    if (tmp == 'n' || tmp == 'N') {
+        giaoDich(A, '+', tong, "Nap Tien");
+        A.setMoney(A.getMoney() + tong);
+        SetConsoleTextAttribute(h, 13);
+        cout << "=>> Tong so tien da nap:  \t\t\t" << tong << "VND." << endl;
+        cout << "Tong so du hien co:       \t\t\t" << A.getMoney() << "VND." << endl;
+        system("pause");
+        return;
+    }
+}
+
+void rutTien(User& A) {
+    system("cls");
+    cout << "\t\t\t  <<>> RUT TIEN <<>> " << endl;
+    char tmp;
+    unsigned long rut, tong = 0;
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(h, 13);
+    cout << "So du hien co trong tai khoan cua ban: " << A.getMoney() << " VND." << endl;
+    do {
+        if (A.getMoney() < 50000) {
+            cout << "Ban khong du tien de thuc hien, vui long nap them.";
+            system("pause");
+            return;
+        }
+        SetConsoleTextAttribute(h, 2);
+        cout << "Vui long chon so tien de rut (>= 50.000 va phai la boi so cua 50.000)."
+            << endl << "(hoac nhap 0 de quay lai Menu va huy tat ca giao dich) VND: ";
+        do {
+            cin >> rut;
+            if (rut == 0) {
+                cout << "Quay lai Menu" << endl;
+                system("pause");
+                return;
+            }
+            if (rut < 50000 || rut % 50000 != 0) cout << "So tien rut phai lon hon hoac bang 50.000 va la boi so cua 50.000 de rut, vui long nhap lai.";
+        } while (rut < 50000 || rut % 50000 != 0);
+        if (A.getMoney() - rut < 50000) {
+            SetConsoleTextAttribute(h, 13);
+            cout << "So du hien tai khong du, vui long nap them." << endl;
+            system("pause");
+            return;
+        }
+        SetConsoleTextAttribute(h, 2);
+        tong = tong + rut;
+        cout << "Ban co muon rut them? [Y/N]: ";
+        cin >> tmp;
+    } while (tmp == 'y' || tmp == 'Y');
+
+    if (tmp == 'n' || tmp == 'N') {
+        A.setMoney(A.getMoney() - tong);
+        giaoDich(A, '-', tong, "Rut Tien");
+        SetConsoleTextAttribute(h, 13);
+        cout << "Rut tien thanh cong! Ban vua moi rut: " << tong << "VND." << endl;
+        cout << "So du con lai trong tai khoan: " << A.getMoney() << "VND." << endl;
+        system("pause");
+        return;
+    }
+}
+
+void xemLichSugiaoDich(User A) {
+    system("cls");
+    cout << "\t\t\t  <<>> LICH SU GIAO DICH <<>> " << endl;
+    stack <string> Tien;
+    stack <string> LoaiGD;
+    stack <string> TG;
+    stack <string> TD;
+    Tien = A.lsTien;
+    LoaiGD = A.lsLoaiGD;
+    TG = A.lsTG;
+    TD = A.lsTD;
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(h, 13);
+    if (Tien.empty() && LoaiGD.empty() && TG.empty()) {
+        cout << "Tai khoan cua ban chua co thuc hien cuoc giao dich nao trong hom nay." << endl;
+        system("pause");
+        return;
+    }
+    while (!Tien.empty() && !LoaiGD.empty() && !TG.empty()) {
+        cout << left << setw(25) << "So ID:" << A.getID() << endl;
+        cout << left << setw(25) << "Ngay giao dich:" << TG.top() << endl;
+        TG.pop();
+
+        cout << left << setw(25) << "Loai giao dich:" << LoaiGD.top() << endl;
+        LoaiGD.pop();
+
+        cout << left << setw(25) << "So tien giao dich:" << Tien.top() << endl;
+        Tien.pop();
+
+        cout << left << setw(25) << "So du hien tai:" << A.getMoney() << endl;
+
+        if (!TD.empty() && TD.top() != "")
+            cout << left << setw(25) << "Thong diep:" << TD.top() << endl;
+        TD.pop();
+
+        cout << endl;
+    }
+    system("pause");
+    return;
+}
+
+void chuyenTien(User& A, List& l) {
+    system("cls");
+    cout << "\t\t\t  <<>> CHUYEN TIEN <<>> " << endl;
+    string id;
+    unsigned long chuyen;
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(h, 10);
+
+    cout << "Nhap ID tai khoan can chuyen den (nhap exit de quay lai Menu)." << endl;
+    do {
+        SetConsoleTextAttribute(h, 2);
+        cout << "ID: ";
+        cin >> id;
+        SetConsoleTextAttribute(h, 13);
+        if (id == "exit" || id == "EXIT") {
+            cout << "Quay lai Menu" << endl;
+            system("pause");
+            return;
+        }
+        if (id.size() != 14) cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
+    } while (id.size() != 14);
+
+    Node* p = l._pHead;
+    while (p != NULL) {
+        if (id == p->value.getID()) {
+            SetConsoleTextAttribute(h, 13);
+
+            if (p->value.getID() == A.getID()) {
+                cout << "Chuyen khoan that bai, ID chuyen tien khong the trung voi ID chuyen toi!" << endl;
+                system("pause");
+                return;
+            }
+
+            if (p->value.getKhoa() == true) {
+                cout << "Tai khoan dich dang bi khoa, khong the chuyen tien!" << endl;
+                system("pause");
+                return;
+            }
+
+            cout << "Da tim thay ID!" << endl;
+            cout << "Ten nguoi nhan: " << p->value.getName() << endl;
+            cout << "So du hien co trong tai khoan cua ban: " << A.getMoney() << "VND." << endl;
+
+            if (A.getMoney() < 50000) {
+                cout << "Ban khong du tien de thuc hien, vui long nap them." << endl;
+                system("pause");
+                return;
+            }
+
+            SetConsoleTextAttribute(h, 2);
+            cout << "Vui long cho so tien de chuyen(>= 50.000 va phai la boi so cua 50.000)"
+                << endl << "(hoac nhap 0 de quay lai Menu va huy tat ca giao dich) VND: ";
+
+            do {
+                cin >> chuyen;
+                if (chuyen == 0) {
+                    cout << "Quay lai Menu" << endl;
+                    system("pause");
+                    return;
+                }
+                if (chuyen < 50000 || chuyen % 50000 != 0) {
+                    cout << "So tien phai lon hon hoac bang 50.000 va la boi so cua 50.000, vui long nhap lai: ";
+                }
+            } while (chuyen < 50000 || chuyen % 50000 != 0);
+
+            if (A.getMoney() - chuyen < 50000) {
+                cout << "So du hien tai khong du, vui long nap them.";
+                system("pause");
+                return;
+            }
+
+            A.setMoney(A.getMoney() - chuyen);
+            p->value.setMoney(p->value.getMoney() + chuyen);
+
+            string thongdiep;
+            SetConsoleTextAttribute(h, 2);
+            cout << "Thong diep muon gui: ";
+            cin.ignore();
+            getline(cin, thongdiep);
+
+            giaoDich(A, '-', chuyen, "Chuyen Tien toi " + p->value.getName(), thongdiep);
+            giaoDich(p->value, '+', chuyen, "Nhan tien duoc gui tu " + A.getName(), thongdiep);
+
+            SetConsoleTextAttribute(h, 13);
+            cout << "Chuyen tien thanh cong! Ban vua moi chuyen: " << chuyen << "VND cho " << p->value.getName() << endl;
+            cout << "So du con lai trong tai khoan: " << A.getMoney() << endl;
+            system("pause");
+            return;
+        }
+        p = p->_pNext;
+    }
+
+    SetConsoleTextAttribute(h, 13);
+    cout << "Chuyen khoan that bai, ID can chuyen khong ton tai!" << endl;
+    system("pause");
+    return;
+
+}
