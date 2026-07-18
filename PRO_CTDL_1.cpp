@@ -9,6 +9,14 @@
 #include <iomanip>
 using namespace std;
 
+struct GiaoDich
+{
+    string tien;
+    string loai;
+    string thoiGian;
+    string thongDiep;
+};
+
 class User
 {
 private:
@@ -22,10 +30,8 @@ private:
     bool firstLogin = true;
 
 public:
-    stack<string> lsTien;
-    stack<string> lsLoaiGD;
-    stack<string> lsTG;
-    stack<string> lsTD;
+    stack<GiaoDich> lichSu;
+
     User()
     {
         ID = "00000000000000";
@@ -648,9 +654,6 @@ void MenuSanh() {
 }
 
 void giaoDich(User& A, char ct, unsigned long tien, string loai, string thongdiep = "") {
-    A.lsTien.push(ct + to_string(tien));
-    A.lsLoaiGD.push(loai);
-
     time_t now = time(0);
     tm* ltm = localtime(&now);
     string nam = to_string(1900 + ltm->tm_year);
@@ -660,8 +663,13 @@ void giaoDich(User& A, char ct, unsigned long tien, string loai, string thongdie
     string phut = to_string(ltm->tm_min);
     string giay = to_string(ltm->tm_sec);
 
-    A.lsTG.push(ngay + "/" + thang + "/" + nam + " " + gio + ":" + phut + ":" + giay);
-    A.lsTD.push(thongdiep);
+    GiaoDich gd;
+    gd.tien = ct + to_string(tien);
+    gd.loai = loai;
+    gd.thoiGian = ngay + "/" + thang + "/" + nam + " " + gio + ":" + phut + ":" + giay;
+    gd.thongDiep = thongdiep;
+
+    A.lichSu.push(gd);
 }
 
 void napTien(User& A) {
@@ -769,37 +777,26 @@ void rutTien(User& A) {
 void xemLichSugiaoDich(User A) {
     system("cls");
     cout << "\t\t\t  <<>> LICH SU GIAO DICH <<>> " << endl;
-    stack <string> Tien;
-    stack <string> LoaiGD;
-    stack <string> TG;
-    stack <string> TD;
-    Tien = A.lsTien;
-    LoaiGD = A.lsLoaiGD;
-    TG = A.lsTG;
-    TD = A.lsTD;
+    stack<GiaoDich> lichSu = A.lichSu;
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(h, 13);
-    if (Tien.empty() && LoaiGD.empty() && TG.empty()) {
+    if (lichSu.empty()) {
         cout << "Tai khoan cua ban chua co thuc hien cuoc giao dich nao trong hom nay." << endl;
         system("pause");
         return;
     }
-    while (!Tien.empty() && !LoaiGD.empty() && !TG.empty()) {
+    while (!lichSu.empty()) {
+        GiaoDich gd = lichSu.top();
+        lichSu.pop();
+
         cout << left << setw(25) << "So ID:" << A.getID() << endl;
-        cout << left << setw(25) << "Ngay giao dich:" << TG.top() << endl;
-        TG.pop();
-
-        cout << left << setw(25) << "Loai giao dich:" << LoaiGD.top() << endl;
-        LoaiGD.pop();
-
-        cout << left << setw(25) << "So tien giao dich:" << Tien.top() << endl;
-        Tien.pop();
-
+        cout << left << setw(25) << "Ngay giao dich:" << gd.thoiGian << endl;
+        cout << left << setw(25) << "Loai giao dich:" << gd.loai << endl;
+        cout << left << setw(25) << "So tien giao dich:" << gd.tien << endl;
         cout << left << setw(25) << "So du hien tai:" << A.getMoney() << endl;
 
-        if (!TD.empty() && TD.top() != "")
-            cout << left << setw(25) << "Thong diep:" << TD.top() << endl;
-        TD.pop();
+        if (gd.thongDiep != "")
+            cout << left << setw(25) << "Thong diep:" << gd.thongDiep << endl;
 
         cout << endl;
     }
@@ -935,25 +932,26 @@ void capNhatFileLichSu(List l) {
     ofstream out2("[LichSuID].txt");
     Node* p = l._pHead;
     while (p != NULL) {
-        if (!p->value.lsTien.empty()) {
-            stack <string> Tien = p->value.lsTien;
-            stack <string> LoaiGD = p->value.lsLoaiGD;
-            stack <string> TG = p->value.lsTG;
-            stack <string> TD = p->value.lsTD;
-            while (!TG.empty() && !LoaiGD.empty() && !Tien.empty() && !TD.empty()) {
+        if (!p->value.lichSu.empty()) {
+            stack<GiaoDich> lichSu = p->value.lichSu;
+            while (!lichSu.empty()) {
+                GiaoDich gd = lichSu.top();
+                lichSu.pop();
+
                 out2 << p->value.getID() << endl;
-                out2 << TG.top() << endl;       TG.pop();
-                out2 << LoaiGD.top();           LoaiGD.pop();
-                if (TD.top() != "")
-                    out2 << " voi thong diep: " << TD.top();   TD.pop();
+                out2 << gd.thoiGian << endl;
+                out2 << gd.loai;
+                if (gd.thongDiep != "")
+                    out2 << " voi thong diep: " << gd.thongDiep;
                 out2 << endl;
-                out2 << Tien.top() << endl;     Tien.pop();
+                out2 << gd.tien << endl;
             }
         }
         p = p->_pNext;
     }
     out2.close();
 }
+
 void docFileTheTu(List& l) {
     ifstream in3("TheTu.txt");
     string id, pin, khoa;
@@ -1031,13 +1029,16 @@ int main() {
                 break;
             }
         }
+        GiaoDich gd;
+        gd.thoiGian = tg;
+        gd.loai = loai;
+        gd.tien = tien;
+        gd.thongDiep = thongdiep;
+
         Node* p = Admin._pHead;
         while (p != NULL) {
             if (p->value.getID() == id) {
-                p->value.lsTG.push(tg);
-                p->value.lsLoaiGD.push(loai);
-                p->value.lsTien.push(tien);
-                p->value.lsTD.push(thongdiep);
+                p->value.lichSu.push(gd);
             }
             p = p->_pNext;
         }
