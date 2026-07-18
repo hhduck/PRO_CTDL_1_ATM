@@ -473,3 +473,176 @@ void MenuAdmin() {
     cout << "|        \t5. Quay lai sanh          \t\t |" << endl;
     cout << "**********************************************************" << endl;
 }
+void xemThongTin(User& A) {
+    system("cls");
+    cout << "\t\t\t  <<>> THONG TIN TAI KHOAN <<>> " << endl;
+    cout << A;
+    system("pause");
+    return;
+}
+
+void maPinSao(string& pin) {
+    char ast = ' ';
+    int aste = 0;
+    pin = "";
+    do {
+        ast = _getch();
+        if (ast == 13 || ast == ' ') {
+            break;
+        }
+        if (ast == 8 || ast == 127) {
+            if (pin.size() != 0) {
+                cout << "\b \b";
+                pin.erase(pin.size() - 1);
+                aste--;
+            }
+        }
+        else {
+            pin += ast;
+            cout << "*";
+            aste++;
+        }
+    } while (ast != 13 || ast != ' ');
+}
+
+void doiMaPin(User& A) {
+    system("cls");
+    cout << "\t\t\t  <<>> DOI MA PIN <<>> " << endl;
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(h, 13);
+    cout << "Ma PIN gom 6 chu so (Nhap 0 de quay lai Menu)." << endl;
+    SetConsoleTextAttribute(h, 2);
+    cout << "Nhap ma PIN hien tai: ";
+    char ast = ' ';
+    int aste = 0;
+    string pin, pinnew1, pinnew2;
+    do {
+        cout << "PIN: ";
+        maPinSao(pin);
+        if (pin == "0") {
+            cout << "\nQuay lai Menu." << endl;
+            system("pause");
+            return;
+        }
+        cout << endl;
+        SetConsoleTextAttribute(h, 13);
+        if (pin != A.getPIN()) cout << "Ma PIN nhap sai, vui long nhap lai." << endl;
+    } while (pin != A.getPIN());
+
+    if (pin == A.getPIN()) {
+        do {
+            SetConsoleTextAttribute(h, 2);
+            cout << "Nhap Ma PIN moi: ";
+            do {
+                maPinSao(pinnew1);
+                cout << endl;
+                if (pinnew1.size() != 6) cout << "Ma PIN phai co 6 chu so, vui long nhap lai: " << endl;
+            } while (pinnew1.size() != 6);
+            cout << "Xac nhan lai ma PIN moi: ";
+            do {
+                maPinSao(pinnew2);
+                cout << endl;
+                if (pinnew2.size() != 6) cout << "Ma PIN phai co 6 chu so, vui long nhap lai: " << endl;
+            } while (pinnew2.size() != 6);
+
+            if (pinnew1 != pinnew2) cout << "Ma PIN moi khong khop nhau, vui long nhap lai ma PIN moi." << endl;
+        } while (pinnew1 != pinnew2);
+
+        if (pinnew1 == pinnew2) {
+            A.setPIN(pinnew2);
+            SetConsoleTextAttribute(h, 13);
+            cout << "Doi ma PIN thanh cong!" << endl;
+            system("pause");
+            return;
+        }
+    }
+}
+
+Node* dangNhapUser(List& l) {
+    string id, pin;
+    cout << "Nhap ID: ";
+    cin >> id;
+
+    Node* p = l._pHead;
+    while (p != NULL) {
+        if (p->value.getID() == id) {
+            if (p->value.getKhoa()) {
+                cout << "Tai khoan bi khoa. Lien he Admin.\n";
+                cout << "Bam Enter de quay lai menu...";
+                cin.ignore();
+                cin.get();
+                return NULL;
+            }
+
+            int soLanSai = 0;
+            const int MAX_LAN_SAI = 3;
+
+            while (soLanSai < MAX_LAN_SAI) {
+                cout << "Nhap ma PIN: ";
+                maPinSao(pin);
+                cout << endl;
+
+                if (pin == p->value.getPIN()) {
+                    if (p->value.isFirstLogin() && pin == "123456") {
+                        cout << "\nDAY LA LAN DAU DANG NHAP. VUI LONG DOI MA PIN.\n";
+                        cout << "Bam Enter de tiep tuc doi mat khau...";
+                        cin.ignore();
+                        cin.get();
+                        doiMaPin(p->value);
+                        p->value.setFirstLogin(false);
+                    }
+                    cout << "Dang nhap thanh cong!\n";
+                    return p;
+                }
+                else {
+                    soLanSai++;
+                    if (soLanSai < MAX_LAN_SAI) {
+                        cout << "Sai ma PIN. Con " << (MAX_LAN_SAI - soLanSai)
+                            << " lan thu. Vui long thu lai.\n";
+                    }
+                }
+            }
+
+            cout << "Ban da nhap sai ma PIN " << MAX_LAN_SAI
+                << " lan. Tai khoan se bi khoa.\n";
+            cin.ignore();
+            cin.get();
+            p->value.setKhoa(true);
+            return NULL;
+        }
+        p = p->_pNext;
+    }
+
+    cout << "ID khong ton tai.\n";
+    return NULL;
+}
+
+void MenuUser(User A) {
+    system("cls");
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(h, 13);
+    cout << "*************** <<>> AAAAA  BANK <<>> ***************" << endl;
+    cout << "|                     MENU USER                     |" << endl;
+    cout << "|---------- Vui long chon loai giao dich -----------|" << endl;
+    cout << "| \t1. Xem thong tin tai khoan  \t\t\    |" << endl;
+    cout << "| \t2. Nap tien                 \t\t\    |" << endl;
+    cout << "| \t3. Rut tien                 \t\t\    |" << endl;
+    cout << "| \t4. Chuyen tien              \t\t\    |" << endl;
+    cout << "| \t5. Xem lich su giao dich    \t\t\    |" << endl;
+    cout << "| \t6. Doi ma pin               \t\t\    |" << endl;
+    cout << "| \t7. Quay lai sanh            \t\t\    |" << endl;
+    cout << "*****************************************************" << endl;
+}
+
+void MenuSanh() {
+    system("cls");
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(h, 14);
+    cout << "******** <<>> WELCOME TO AAAAA BANK <<>> **********" << endl;
+    cout << "|\t       [ AAAAA BANK LOBBY ]               |" << endl;
+    cout << "|---------------- Admin or User ------------------|" << endl;
+    cout << "| \t 1. Admin       \t\t\t  |" << endl;
+    cout << "| \t 2. User        \t\t\t  |" << endl;
+    cout << "| \t 3. Exit                      \t\t\  |" << endl;
+    cout << "***************************************************" << endl;
+}
