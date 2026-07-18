@@ -930,3 +930,45 @@ void capNhatFileID(List l) {
     }
     out3.close();
 }
+
+void capNhatFileLichSu(List l) {
+    ofstream out2("[LichSuID].txt");
+    Node* p = l._pHead;
+    while (p != NULL) {
+        if (!p->value.lsTien.empty()) {
+            stack <string> Tien = p->value.lsTien;
+            stack <string> LoaiGD = p->value.lsLoaiGD;
+            stack <string> TG = p->value.lsTG;
+            stack <string> TD = p->value.lsTD;
+            while (!TG.empty() && !LoaiGD.empty() && !Tien.empty() && !TD.empty()) {
+                out2 << p->value.getID() << endl;
+                out2 << TG.top() << endl;       TG.pop();
+                out2 << LoaiGD.top();           LoaiGD.pop();
+                if (TD.top() != "")
+                    out2 << " voi thong diep: " << TD.top();   TD.pop();
+                out2 << endl;
+                out2 << Tien.top() << endl;     Tien.pop();
+            }
+        }
+        p = p->_pNext;
+    }
+    out2.close();
+}
+void docFileTheTu(List& l) {
+    ifstream in3("TheTu.txt");
+    string id, pin, khoa;
+
+    while (getline(in3, id) && getline(in3, pin) &&
+        getline(in3, khoa)) {
+
+        Node* p = l._pHead;
+        while (p != NULL) {
+            if (p->value.getID() == id) {
+                p->value.setKhoa(khoa == "1");
+                break;
+            }
+            p = p->_pNext;
+        }
+    }
+    in3.close();
+}
