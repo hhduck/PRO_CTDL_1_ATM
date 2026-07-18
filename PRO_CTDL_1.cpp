@@ -905,3 +905,28 @@ void chuyenTien(User& A, List& l) {
     return;
 
 }
+
+void capNhatFileTheTu(List l) {
+    ofstream out1("TheTu.txt");
+    Node* p = l._pHead;
+    while (p != NULL) {
+        out1 << p->value.getID() << endl;
+        out1 << p->value.getPIN() << endl;
+        if (p->value.getKhoa() == false) out1 << "0" << endl;
+        if (p->value.getKhoa() == true) out1 << "1" << endl;
+        p = p->_pNext;
+    }
+}
+
+void capNhatFileID(List l) {
+    ofstream out3("[ID].txt");
+    Node* p = l._pHead;
+    while (p != NULL) {
+        out3 << p->value.getID() << endl;
+        out3 << p->value.getName() << endl;
+        out3 << p->value.getMoney() << endl;
+        out3 << p->value.getISO() << endl;
+        p = p->_pNext;
+    }
+    out3.close();
+}
