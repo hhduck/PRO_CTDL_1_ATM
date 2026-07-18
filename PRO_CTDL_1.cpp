@@ -1047,3 +1047,127 @@ int main() {
     capNhatFileID(Admin);
     capNhatFileTheTu(Admin);
     capNhatFileLichSu(Admin);
+
+    while (true) {
+        MenuSanh();
+        int tmp;
+        string chon;
+        bool MenuA = true;
+        bool MenuU = true;
+        HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(h, 2);
+        do {
+            cout << "Vui long chon: ";  cin >> chon;
+            if (chon != "1" && chon != "2" && chon != "3") cout << "Ban da chon sai, vui long chon lai." << endl;
+        } while (chon != "1" && chon != "2" && chon != "3");
+        tmp = stoi(chon);
+        switch (tmp) {
+        case 1: {
+            if (dangNhapAdmin(Admin) == true) {
+                do {
+                    MenuAdmin();
+                    int tmp1;
+                    do {
+                        cout << "Vui long chon: ";  cin >> chon;
+                        if (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5") cout << "Ban da chon sai, vui long chon lai." << endl;
+                    } while (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5");
+                    tmp1 = stoi(chon);
+                    switch (tmp1) {
+                    case 1: {
+                        xemDanhSachTaiKhoan(Admin);
+                        break;
+                    }
+                    case 2: {
+                        themTaiKhoan(Admin);
+                        capNhatFileID(Admin);
+                        capNhatFileTheTu(Admin);
+                        break;
+                    }
+                    case 3: {
+                        xoaTaiKhoan(Admin);
+                        capNhatFileID(Admin);
+                        capNhatFileTheTu(Admin);
+                        break;
+                    }
+                    case 4: {
+                        moKhoaTaiKhoan(Admin);
+                        capNhatFileID(Admin);
+                        capNhatFileTheTu(Admin);
+
+                        break;
+                    }
+                    case 5: {
+                        MenuA = false;
+                        break;
+                    }
+                    }
+                } while (MenuA == true);
+            }
+            break;
+        }
+        case 2: {
+            Node* p = dangNhapUser(Admin);
+            capNhatFileTheTu(Admin);
+            capNhatFileID(Admin);
+            if (p != NULL) {
+                do {
+                    MenuUser(p->value);
+                    int tmp2;
+                    do {
+                        cout << "Vui long chon: ";  cin >> chon;
+                        if (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5" && chon != "6" && chon != "7") cout << "Ban da chon sai, vui long chon lai." << endl;
+                    } while (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5" && chon != "6" && chon != "7");
+                    tmp2 = stoi(chon);
+                    switch (tmp2) {
+                    case 1: {
+                        xemThongTin(p->value);
+                        break;
+                    }
+                    case 2: {
+                        napTien(p->value);
+                        capNhatFileID(Admin);
+                        capNhatFileTheTu(Admin);
+                        capNhatFileLichSu(Admin);
+                        break;
+                    }
+                    case 3: {
+                        rutTien(p->value);
+                        capNhatFileID(Admin);
+                        capNhatFileTheTu(Admin);
+                        capNhatFileLichSu(Admin);
+                        break;
+                    }
+                    case 4: {
+                        chuyenTien(p->value, Admin);
+                        capNhatFileID(Admin);
+                        capNhatFileTheTu(Admin);
+                        capNhatFileLichSu(Admin);
+                        break;
+                    }
+                    case 5: {
+                        xemLichSugiaoDich(p->value);
+                        break;
+                    }
+                    case 6: {
+                        doiMaPin(p->value);
+                        capNhatFileID(Admin);
+                        capNhatFileTheTu(Admin);
+                        break;
+                    }
+                    case 7: {
+                        MenuU = false;
+                        break;
+                    }
+                    }
+                } while (MenuU == true);
+            }
+            break;
+        }
+        case 3: {
+            return 0;
+        }
+        }
+    }
+
+    return 0;
+}
