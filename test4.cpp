@@ -284,23 +284,12 @@ void themTaiKhoan(List &l)
     } while (!isValidName(name));
 
     cout << "So tien tao tai khoan: ";
-    bool hopLeMoney;
     do
     {
         cin >> money;
-        hopLeMoney = !cin.fail();
-        if (!hopLeMoney)
-        {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Vui long nhap so hop le!!!" << endl;
-        }
-        else if (money < 0)
-        {
+        if (money < 0)
             cout << "Tien tao tai khoan khong the la so am!!!" << endl;
-            hopLeMoney = false;
-        }
-    } while (!hopLeMoney);
+    } while (money < 0);
 
     cout << "Don vi tien te: ";
     do
@@ -390,7 +379,6 @@ void xoaTaiKhoan(List &l)
         l._pHead = p->_pNext;
         if (l._pHead == NULL)
             l._pTail = NULL;
-        delete p;
         system("pause");
         return;
     }
@@ -403,11 +391,7 @@ void xoaTaiKhoan(List &l)
             cout << "Da xoa " << p->_pNext->value.getName() << " ra khoi he thong." << endl;
             remove((p->_pNext->value.getID() + ".txt").c_str());
             remove(("LichSu" + p->_pNext->value.getID() + ".txt").c_str());
-            Node *tmp = p->_pNext;
             p->_pNext = p->_pNext->_pNext;
-            if (p->_pNext == NULL)
-                l._pTail = p;
-            delete tmp;
             system("pause");
             return;
         }
@@ -826,11 +810,6 @@ void napTien(User &A)
         do
         {
             cin >> soto;
-            if (cin.fail())
-            {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            }
             if (soto <= 0 || soto >= 101)
             {
                 cout << "Ban da nhap sai so to, vui long nhap lai." << endl;
@@ -882,13 +861,6 @@ void rutTien(User &A)
         do
         {
             cin >> rut;
-            if (cin.fail())
-            {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "So tien rut phai lon hon hoac bang 50.000 va la boi so cua 50.000 de rut, vui long nhap lai.";
-                continue;
-            }
             if (rut == 0)
             {
                 cout << "Quay lai Menu" << endl;
