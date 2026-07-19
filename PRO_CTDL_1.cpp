@@ -188,19 +188,11 @@ void xemDanhSachTaiKhoan(List l) {
     int dem = 1;
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     while (p != NULL) {
-        SetConsoleTextAttribute(h, 13);
         cout << "Khach hang thu " << dem << ":" << endl;
-        cout << p->value;
-        cout << "Trang thai tai khoan: \t\t\t";
-        if (p->value.getKhoa() == true) {
-            SetConsoleTextAttribute(h, 12);
-            cout << "Bi khoa" << endl;
-        }
-        if (p->value.getKhoa() == false) {
-            SetConsoleTextAttribute(h, 10);
-            cout << "Dang hoat dong" << endl;
-        }
+        cout << "ID: " << p->value.getID() << endl;
+        cout << "PIN: " << p->value.getPIN() << endl;
         cout << endl;
+
         p = p->_pNext;
         dem++;
     }
@@ -299,17 +291,35 @@ void themTaiKhoan(List& l) {
 }
 
 void delHead(List& l) {
-    if (l._pHead != NULL) {
-        Node* p = l._pHead;
-        l._pHead = p->_pNext;
-    }
+    if (l._pHead == NULL)
+        return;
+
+    Node* p = l._pHead;      
+    l._pHead = p->_pNext;
+
+    if (l._pHead == NULL)   
+        l._pTail = NULL;
+
+    delete p;
 }
 
 void delTail(List& l) {
+    if (l._pHead == NULL)
+        return;
+
+    if (l._pHead == l._pTail) {
+        delete l._pHead;
+        l._pHead = l._pTail = NULL;
+        return;
+    }
     Node* p = l._pHead;
-    while (p->_pNext->_pNext != NULL) {
+
+    while (p->_pNext != l._pTail) {
         p = p->_pNext;
     }
+
+    delete l._pTail;     
+    l._pTail = p;
     p->_pNext = NULL;
 }
 
@@ -764,11 +774,23 @@ void rutTien(User& A) {
     } while (tmp == 'y' || tmp == 'Y');
 
     if (tmp == 'n' || tmp == 'N') {
-        A.setMoney(A.getMoney() - tong);
-        giaoDich(A, '-', tong, "Rut Tien");
-        SetConsoleTextAttribute(h, 13);
-        cout << "Rut tien thanh cong! Ban vua moi rut: " << tong << "VND." << endl;
-        cout << "So du con lai trong tai khoan: " << A.getMoney() << "VND." << endl;
+
+        char xacNhan;
+        cout << "Xac nhan giao dich? (Y/N): ";
+        cin >> xacNhan;
+
+        if (xacNhan == 'Y' || xacNhan == 'y') {
+            A.setMoney(A.getMoney() - tong);
+            giaoDich(A, '-', tong, "Rut Tien");
+
+            SetConsoleTextAttribute(h, 13);
+            cout << "Rut tien thanh cong! Ban vua moi rut: " << tong << " VND." << endl;
+            cout << "So du con lai trong tai khoan: " << A.getMoney() << " VND." << endl;
+        }
+        else {
+            cout << "Da huy giao dich." << endl;
+        }
+
         system("pause");
         return;
     }
@@ -874,7 +896,15 @@ void chuyenTien(User& A, List& l) {
                 system("pause");
                 return;
             }
+            char xacNhan;
+            cout << "Xac nhan giao dich? (Y/N): ";
+            cin >> xacNhan;
 
+            if (xacNhan != 'Y' && xacNhan != 'y') {
+                cout << "Da huy giao dich." << endl;
+                system("pause");
+                return;
+            }
             A.setMoney(A.getMoney() - chuyen);
             p->value.setMoney(p->value.getMoney() + chuyen);
 
