@@ -7,6 +7,8 @@
 #include <conio.h>
 #include <windows.h>
 #include <iomanip>
+#include <cstdio>
+#include <limits>
 using namespace std;
 
 struct GiaoDich
@@ -181,13 +183,15 @@ void addNode(List &l, Node *p)
     }
 }
 
-void xemDanhSachTaiKhoan(List l) {
+void xemDanhSachTaiKhoan(List l)
+{
     system("cls");
     cout << "\t\t\t  <<>> XEM DANH SACH TAI KHOAN <<>> " << endl;
-    Node* p = l._pHead;
+    Node *p = l._pHead;
     int dem = 1;
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-    while (p != NULL) {
+    while (p != NULL)
+    {
         cout << "Khach hang thu " << dem << ":" << endl;
         cout << "ID: " << p->value.getID() << endl;
         cout << "PIN: " << p->value.getPIN() << endl;
@@ -196,52 +200,63 @@ void xemDanhSachTaiKhoan(List l) {
         p = p->_pNext;
         dem++;
     }
-    if (dem == 1) cout << "Hien tai van chua co khach hang." << endl;
+    if (dem == 1)
+        cout << "Hien tai van chua co khach hang." << endl;
     cout << endl;
     system("pause");
     return;
 }
 
-void themTaiKhoan(List& l) {
+void themTaiKhoan(List &l)
+{
     system("cls");
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(h, 10);
     cout << "\t\t\t  <<>> THEM TAI KHOAN <<>> " << endl;
     SetConsoleTextAttribute(h, 13);
-    Node* p = l._pHead;
+    Node *p = l._pHead;
     string id, name, iso;
     unsigned long money;
     User tmp;
     cout << "Luu y, ID khong duoc trung (nhap exit de quay lai Menu)." << endl;
-    do {
+    do
+    {
         SetConsoleTextAttribute(h, 2);
         cout << "Nhap ID (14 chu so): ";
         cin >> id;
         SetConsoleTextAttribute(h, 13);
-        if (id == "exit" || id == "EXIT") {
+        if (id == "exit" || id == "EXIT")
+        {
             cout << "Quay lai Menu" << endl;
             system("pause");
             return;
         }
-        if (id.size() != 14) cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
+        if (id.size() != 14)
+            cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
     } while (id.size() != 14);
-    while (p != NULL) {
-        if (p->value.getID() == id) {
-            do {
+    while (p != NULL)
+    {
+        if (p->value.getID() == id)
+        {
+            do
+            {
                 cout << "ID nay da ton tai, vui long nhap ID moi!!" << endl;
                 cout << p->value << endl;
                 cout << "Hay lay ID khac." << endl;
-                do {
+                do
+                {
                     SetConsoleTextAttribute(h, 2);
                     cout << "Nhap ID (14 chu so): ";
                     cin >> id;
                     SetConsoleTextAttribute(h, 13);
-                    if (id == "exit" || id == "EXIT") {
+                    if (id == "exit" || id == "EXIT")
+                    {
                         cout << "Quay lai Menu" << endl;
                         system("pause");
                         return;
                     }
-                    if (id.size() != 14) cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
+                    if (id.size() != 14)
+                        cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
                 } while (id.size() != 14);
             } while (id == p->value.getID());
             break;
@@ -250,21 +265,26 @@ void themTaiKhoan(List& l) {
     }
     cout << "Ma PIN mac dinh cua ban: 123456" << endl;
 
-    auto isValidName = [](const string& name) {
-        for (char c : name) {
-            if (!isalpha(c) && c != ' ') {
+    auto isValidName = [](const string &name)
+    {
+        for (char c : name)
+        {
+            if (!isalpha(c) && c != ' ')
+            {
                 return false;
             }
         }
         return !name.empty();
-        };
+    };
 
-    do {
+    do
+    {
         cout << "Ho va ten (chi nhap chu cai): ";
         cin.ignore();
         getline(cin, name);
 
-        if (!isValidName(name)) {
+        if (!isValidName(name))
+        {
             SetConsoleTextAttribute(h, 12);
             cout << "Ten khong hop le! Chi duoc nhap chu cai va khoang trang." << endl;
             SetConsoleTextAttribute(h, 13);
@@ -272,15 +292,19 @@ void themTaiKhoan(List& l) {
     } while (!isValidName(name));
 
     cout << "So tien tao tai khoan: ";
-    do {
+    do
+    {
         cin >> money;
-        if (money < 0) cout << "Tien tao tai khoan khong the la so am!!!" << endl;
+        if (money < 0)
+            cout << "Tien tao tai khoan khong the la so am!!!" << endl;
     } while (money < 0);
 
     cout << "Don vi tien te: ";
-    do {
+    do
+    {
         cin >> iso;
-        if (iso.size() != 3) cout << "Vui long nhap lai don vi tien te!!!" << endl;
+        if (iso.size() != 3)
+            cout << "Vui long nhap lai don vi tien te!!!" << endl;
     } while (iso.size() != 3);
 
     User tmp2(id, "123456", name, money, iso);
@@ -290,40 +314,45 @@ void themTaiKhoan(List& l) {
     return;
 }
 
-void delHead(List& l) {
+void delHead(List &l)
+{
     if (l._pHead == NULL)
         return;
 
-    Node* p = l._pHead;      
+    Node *p = l._pHead;
     l._pHead = p->_pNext;
 
-    if (l._pHead == NULL)   
+    if (l._pHead == NULL)
         l._pTail = NULL;
 
     delete p;
 }
 
-void delTail(List& l) {
+void delTail(List &l)
+{
     if (l._pHead == NULL)
         return;
 
-    if (l._pHead == l._pTail) {
+    if (l._pHead == l._pTail)
+    {
         delete l._pHead;
         l._pHead = l._pTail = NULL;
         return;
     }
-    Node* p = l._pHead;
+    Node *p = l._pHead;
 
-    while (p->_pNext != l._pTail) {
+    while (p->_pNext != l._pTail)
+    {
         p = p->_pNext;
     }
 
-    delete l._pTail;     
+    delete l._pTail;
     l._pTail = p;
     p->_pNext = NULL;
 }
 
-void xoaTaiKhoan(List& l) {
+void xoaTaiKhoan(List &l)
+{
     system("cls");
     cout << "\t\t\t  <<>> XOA TAI KHOAN <<>> " << endl;
 
@@ -331,23 +360,28 @@ void xoaTaiKhoan(List& l) {
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(h, 10);
     cout << "Nhap ID tai khoan can xoa (Nhap exit de quay lai Menu)." << endl;
-    do {
+    do
+    {
         SetConsoleTextAttribute(h, 2);
         cout << "ID: ";
         cin >> id;
         SetConsoleTextAttribute(h, 13);
-        if (id == "exit" || id == "EXIT") {
+        if (id == "exit" || id == "EXIT")
+        {
             cout << "Quay lai Menu" << endl;
             system("pause");
             return;
         }
-        if (id.size() != 14) cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
+        if (id.size() != 14)
+            cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
     } while (id.size() != 14);
     SetConsoleTextAttribute(h, 13);
-    Node* p = l._pHead;
+    Node *p = l._pHead;
 
-    while (p->_pNext != NULL) {
-        if (id == p->_pNext->value.getID()) {
+    while (p->_pNext != NULL)
+    {
+        if (id == p->_pNext->value.getID())
+        {
             cout << "Xoa tai khoan thanh cong!" << endl;
             cout << "Da xoa " << p->_pNext->value.getName() << " ra khoi he thong." << endl;
             p->_pNext = p->_pNext->_pNext;
@@ -363,39 +397,47 @@ void xoaTaiKhoan(List& l) {
     return;
 }
 
-void moKhoaTaiKhoan(List& l) {
+void moKhoaTaiKhoan(List &l)
+{
     system("cls");
     cout << "\t\t\t  <<>> MO KHOA TAI KHOAN <<>> " << endl;
     string id;
     int dem = 1;
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    Node* p = l._pHead;
+    Node *p = l._pHead;
     SetConsoleTextAttribute(h, 10);
     cout << "Nhap ID tai khoan can mo khoa (nhap exit de quay lai Menu)." << endl;
-    do {
+    do
+    {
         SetConsoleTextAttribute(h, 2);
         cout << "ID: ";
         cin >> id;
         SetConsoleTextAttribute(h, 13);
-        if (id == "exit" || id == "EXIT") {
+        if (id == "exit" || id == "EXIT")
+        {
             cout << "Quay lai Menu" << endl;
             system("pause");
             return;
         }
-        if (id.size() != 14) cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
+        if (id.size() != 14)
+            cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
     } while (id.size() != 14);
     SetConsoleTextAttribute(h, 10);
 
-    while (p != NULL) {
-        if (id == p->value.getID()) {
-            if (p->value.getKhoa() == false) {
+    while (p != NULL)
+    {
+        if (id == p->value.getID())
+        {
+            if (p->value.getKhoa() == false)
+            {
                 SetConsoleTextAttribute(h, 10);
                 cout << "Tai khoan van dang duoc hoat dong binh thuong." << endl;
                 system("pause");
                 return;
             }
-            else {
+            else
+            {
                 p->value.setKhoa(false);
                 cout << "Mo khoa tai khoan thanh cong!" << endl;
                 system("pause");
@@ -410,7 +452,8 @@ void moKhoaTaiKhoan(List& l) {
     return;
 }
 
-bool dangNhapAdmin(List l) {
+bool dangNhapAdmin(List l)
+{
     string user, pass;
     char ast = ' ';
     int aste = 0;
@@ -419,11 +462,16 @@ bool dangNhapAdmin(List l) {
     SetConsoleTextAttribute(h, 10);
     cout << "\t\t\tDANG NHAP ADMIN" << endl;
     SetConsoleTextAttribute(h, 2);
-    cout << "User: "; cin >> user;
-    for (int i = 0; i < 6; i++) {
-        if (l.getUseri(i) == user) {
-            do {
-                if (dem == 3) {
+    cout << "User: ";
+    cin >> user;
+    for (int i = 0; i < 6; i++)
+    {
+        if (l.getUseri(i) == user)
+        {
+            do
+            {
+                if (dem == 3)
+                {
                     SetConsoleTextAttribute(h, 13);
                     cout << "Ban da nhap sai qua qua nhieu lan, vui long thu lai trong giay lat." << endl;
                     system("pause");
@@ -433,19 +481,24 @@ bool dangNhapAdmin(List l) {
 
                 SetConsoleTextAttribute(h, 2);
                 cout << "Pass: ";
-                do {
+                do
+                {
                     ast = _getch();
-                    if (ast == 13 || ast == ' ') {
+                    if (ast == 13 || ast == ' ')
+                    {
                         break;
                     }
-                    if (ast == 8 || ast == 127) {
-                        if (pass.size() != 0) {
+                    if (ast == 8 || ast == 127)
+                    {
+                        if (pass.size() != 0)
+                        {
                             cout << "\b \b";
                             pass.erase(pass.size() - 1);
                             aste--;
                         }
                     }
-                    else {
+                    else
+                    {
                         pass += ast;
                         cout << "*";
                         aste++;
@@ -453,14 +506,16 @@ bool dangNhapAdmin(List l) {
                 } while (ast != 13 || ast != ' ');
                 cout << endl;
 
-                if (l.getPassi(i) == pass) {
+                if (l.getPassi(i) == pass)
+                {
                     SetConsoleTextAttribute(h, 13);
                     cout << "Dang nhap Admin thanh cong, xin chao " << user << "." << endl;
                     system("pause");
                     return true;
                 }
 
-                if (l.getPassi(i) != pass) {
+                if (l.getPassi(i) != pass)
+                {
                     SetConsoleTextAttribute(h, 13);
                     cout << "Mat khau nhap sai, vui long nhap lai." << endl;
                     dem++;
@@ -475,7 +530,8 @@ bool dangNhapAdmin(List l) {
     return false;
 }
 
-void MenuAdmin() {
+void MenuAdmin()
+{
     system("cls");
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(h, 3);
@@ -489,7 +545,8 @@ void MenuAdmin() {
     cout << "|        \t5. Quay lai sanh          \t\t |" << endl;
     cout << "**********************************************************" << endl;
 }
-void xemThongTin(User& A) {
+void xemThongTin(User &A)
+{
     system("cls");
     cout << "\t\t\t  <<>> THONG TIN TAI KHOAN <<>> " << endl;
     cout << A;
@@ -497,23 +554,29 @@ void xemThongTin(User& A) {
     return;
 }
 
-void maPinSao(string& pin) {
+void maPinSao(string &pin)
+{
     char ast = ' ';
     int aste = 0;
     pin = "";
-    do {
+    do
+    {
         ast = _getch();
-        if (ast == 13 || ast == ' ') {
+        if (ast == 13 || ast == ' ')
+        {
             break;
         }
-        if (ast == 8 || ast == 127) {
-            if (pin.size() != 0) {
+        if (ast == 8 || ast == 127)
+        {
+            if (pin.size() != 0)
+            {
                 cout << "\b \b";
                 pin.erase(pin.size() - 1);
                 aste--;
             }
         }
-        else {
+        else
+        {
             pin += ast;
             cout << "*";
             aste++;
@@ -521,7 +584,8 @@ void maPinSao(string& pin) {
     } while (ast != 13 || ast != ' ');
 }
 
-void doiMaPin(User& A) {
+void doiMaPin(User &A)
+{
     system("cls");
     cout << "\t\t\t  <<>> DOI MA PIN <<>> " << endl;
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -532,39 +596,50 @@ void doiMaPin(User& A) {
     char ast = ' ';
     int aste = 0;
     string pin, pinnew1, pinnew2;
-    do {
+    do
+    {
         cout << "PIN: ";
         maPinSao(pin);
-        if (pin == "0") {
+        if (pin == "0")
+        {
             cout << "\nQuay lai Menu." << endl;
             system("pause");
             return;
         }
         cout << endl;
         SetConsoleTextAttribute(h, 13);
-        if (pin != A.getPIN()) cout << "Ma PIN nhap sai, vui long nhap lai." << endl;
+        if (pin != A.getPIN())
+            cout << "Ma PIN nhap sai, vui long nhap lai." << endl;
     } while (pin != A.getPIN());
 
-    if (pin == A.getPIN()) {
-        do {
+    if (pin == A.getPIN())
+    {
+        do
+        {
             SetConsoleTextAttribute(h, 2);
             cout << "Nhap Ma PIN moi: ";
-            do {
+            do
+            {
                 maPinSao(pinnew1);
                 cout << endl;
-                if (pinnew1.size() != 6) cout << "Ma PIN phai co 6 chu so, vui long nhap lai: " << endl;
+                if (pinnew1.size() != 6)
+                    cout << "Ma PIN phai co 6 chu so, vui long nhap lai: " << endl;
             } while (pinnew1.size() != 6);
             cout << "Xac nhan lai ma PIN moi: ";
-            do {
+            do
+            {
                 maPinSao(pinnew2);
                 cout << endl;
-                if (pinnew2.size() != 6) cout << "Ma PIN phai co 6 chu so, vui long nhap lai: " << endl;
+                if (pinnew2.size() != 6)
+                    cout << "Ma PIN phai co 6 chu so, vui long nhap lai: " << endl;
             } while (pinnew2.size() != 6);
 
-            if (pinnew1 != pinnew2) cout << "Ma PIN moi khong khop nhau, vui long nhap lai ma PIN moi." << endl;
+            if (pinnew1 != pinnew2)
+                cout << "Ma PIN moi khong khop nhau, vui long nhap lai ma PIN moi." << endl;
         } while (pinnew1 != pinnew2);
 
-        if (pinnew1 == pinnew2) {
+        if (pinnew1 == pinnew2)
+        {
             A.setPIN(pinnew2);
             SetConsoleTextAttribute(h, 13);
             cout << "Doi ma PIN thanh cong!" << endl;
@@ -574,15 +649,19 @@ void doiMaPin(User& A) {
     }
 }
 
-Node* dangNhapUser(List& l) {
+Node *dangNhapUser(List &l)
+{
     string id, pin;
     cout << "Nhap ID: ";
     cin >> id;
 
-    Node* p = l._pHead;
-    while (p != NULL) {
-        if (p->value.getID() == id) {
-            if (p->value.getKhoa()) {
+    Node *p = l._pHead;
+    while (p != NULL)
+    {
+        if (p->value.getID() == id)
+        {
+            if (p->value.getKhoa())
+            {
                 cout << "Tai khoan bi khoa. Lien he Admin.\n";
                 cout << "Bam Enter de quay lai menu...";
                 cin.ignore();
@@ -593,13 +672,16 @@ Node* dangNhapUser(List& l) {
             int soLanSai = 0;
             const int MAX_LAN_SAI = 3;
 
-            while (soLanSai < MAX_LAN_SAI) {
+            while (soLanSai < MAX_LAN_SAI)
+            {
                 cout << "Nhap ma PIN: ";
                 maPinSao(pin);
                 cout << endl;
 
-                if (pin == p->value.getPIN()) {
-                    if (p->value.isFirstLogin() && pin == "123456") {
+                if (pin == p->value.getPIN())
+                {
+                    if (p->value.isFirstLogin() && pin == "123456")
+                    {
                         cout << "\nDAY LA LAN DAU DANG NHAP. VUI LONG DOI MA PIN.\n";
                         cout << "Bam Enter de tiep tuc doi mat khau...";
                         cin.ignore();
@@ -610,17 +692,19 @@ Node* dangNhapUser(List& l) {
                     cout << "Dang nhap thanh cong!\n";
                     return p;
                 }
-                else {
+                else
+                {
                     soLanSai++;
-                    if (soLanSai < MAX_LAN_SAI) {
+                    if (soLanSai < MAX_LAN_SAI)
+                    {
                         cout << "Sai ma PIN. Con " << (MAX_LAN_SAI - soLanSai)
-                            << " lan thu. Vui long thu lai.\n";
+                             << " lan thu. Vui long thu lai.\n";
                     }
                 }
             }
 
             cout << "Ban da nhap sai ma PIN " << MAX_LAN_SAI
-                << " lan. Tai khoan se bi khoa.\n";
+                 << " lan. Tai khoan se bi khoa.\n";
             cin.ignore();
             cin.get();
             p->value.setKhoa(true);
@@ -633,7 +717,8 @@ Node* dangNhapUser(List& l) {
     return NULL;
 }
 
-void MenuUser(User A) {
+void MenuUser(User A)
+{
     system("cls");
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(h, 13);
@@ -650,7 +735,8 @@ void MenuUser(User A) {
     cout << "*****************************************************" << endl;
 }
 
-void MenuSanh() {
+void MenuSanh()
+{
     system("cls");
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(h, 14);
@@ -663,9 +749,10 @@ void MenuSanh() {
     cout << "***************************************************" << endl;
 }
 
-void giaoDich(User& A, char ct, unsigned long tien, string loai, string thongdiep = "") {
+void giaoDich(User &A, char ct, unsigned long tien, string loai, string thongdiep = "")
+{
     time_t now = time(0);
-    tm* ltm = localtime(&now);
+    tm *ltm = localtime(&now);
     string nam = to_string(1900 + ltm->tm_year);
     string thang = to_string(1 + ltm->tm_mon);
     string ngay = to_string(ltm->tm_mday);
@@ -682,7 +769,8 @@ void giaoDich(User& A, char ct, unsigned long tien, string loai, string thongdie
     A.lichSu.push(gd);
 }
 
-void napTien(User& A) {
+void napTien(User &A)
+{
     system("cls");
     cout << "\t\t\t  <<>> NAP TIEN <<>> " << endl;
     char tmp;
@@ -690,27 +778,33 @@ void napTien(User& A) {
     int soto;
     unsigned long tong = 0;
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-    do {
+    do
+    {
         SetConsoleTextAttribute(h, 2);
         cout << "Vui long chon menh gia de nap (bam 0 de thoat ra va huy giao dich):" << endl;
         cout << "(10.000, 20.000, 50.000, 100.000, 200.000, 500.000)VND: ";
-        do {
+        do
+        {
             cin >> menhgia;
-            if (menhgia == "0") {
+            if (menhgia == "0")
+            {
                 cout << "Quay lai Menu" << endl;
                 system("pause");
                 return;
             }
-            if (menhgia != "10000" && menhgia != "20000" && menhgia != "50000" && menhgia != "100000" && menhgia != "200000" && menhgia != "500000") {
+            if (menhgia != "10000" && menhgia != "20000" && menhgia != "50000" && menhgia != "100000" && menhgia != "200000" && menhgia != "500000")
+            {
                 cout << "Ban da chon sai menh gia, vui long nhap lai." << endl;
                 cout << "(10.000, 20.000, 50.000, 100.000, 200.000, 500.000)VND: ";
             }
         } while (menhgia != "10000" && menhgia != "20000" && menhgia != "50000" && menhgia != "100000" && menhgia != "200000" && menhgia != "500000");
 
         cout << "Nhap so to (1 - 100): ";
-        do {
+        do
+        {
             cin >> soto;
-            if (soto <= 0 || soto >= 101) {
+            if (soto <= 0 || soto >= 101)
+            {
                 cout << "Ban da nhap sai so to, vui long nhap lai." << endl;
                 cout << "Nhap so to (1 - 100): ";
             }
@@ -724,7 +818,8 @@ void napTien(User& A) {
         cin >> tmp;
     } while (tmp == 'y' || tmp == 'Y');
 
-    if (tmp == 'n' || tmp == 'N') {
+    if (tmp == 'n' || tmp == 'N')
+    {
         giaoDich(A, '+', tong, "Nap Tien");
         A.setMoney(A.getMoney() + tong);
         SetConsoleTextAttribute(h, 13);
@@ -735,7 +830,8 @@ void napTien(User& A) {
     }
 }
 
-void rutTien(User& A) {
+void rutTien(User &A)
+{
     system("cls");
     cout << "\t\t\t  <<>> RUT TIEN <<>> " << endl;
     char tmp;
@@ -743,25 +839,32 @@ void rutTien(User& A) {
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(h, 13);
     cout << "So du hien co trong tai khoan cua ban: " << A.getMoney() << " VND." << endl;
-    do {
-        if (A.getMoney() < 50000) {
+    do
+    {
+        if (A.getMoney() < 50000)
+        {
             cout << "Ban khong du tien de thuc hien, vui long nap them.";
             system("pause");
             return;
         }
         SetConsoleTextAttribute(h, 2);
         cout << "Vui long chon so tien de rut (>= 50.000 va phai la boi so cua 50.000)."
-            << endl << "(hoac nhap 0 de quay lai Menu va huy tat ca giao dich) VND: ";
-        do {
+             << endl
+             << "(hoac nhap 0 de quay lai Menu va huy tat ca giao dich) VND: ";
+        do
+        {
             cin >> rut;
-            if (rut == 0) {
+            if (rut == 0)
+            {
                 cout << "Quay lai Menu" << endl;
                 system("pause");
                 return;
             }
-            if (rut < 50000 || rut % 50000 != 0) cout << "So tien rut phai lon hon hoac bang 50.000 va la boi so cua 50.000 de rut, vui long nhap lai.";
+            if (rut < 50000 || rut % 50000 != 0)
+                cout << "So tien rut phai lon hon hoac bang 50.000 va la boi so cua 50.000 de rut, vui long nhap lai.";
         } while (rut < 50000 || rut % 50000 != 0);
-        if (A.getMoney() - rut < 50000) {
+        if (A.getMoney() - rut < 50000)
+        {
             SetConsoleTextAttribute(h, 13);
             cout << "So du hien tai khong du, vui long nap them." << endl;
             system("pause");
@@ -773,13 +876,15 @@ void rutTien(User& A) {
         cin >> tmp;
     } while (tmp == 'y' || tmp == 'Y');
 
-    if (tmp == 'n' || tmp == 'N') {
+    if (tmp == 'n' || tmp == 'N')
+    {
 
         char xacNhan;
         cout << "Xac nhan giao dich? (Y/N): ";
         cin >> xacNhan;
 
-        if (xacNhan == 'Y' || xacNhan == 'y') {
+        if (xacNhan == 'Y' || xacNhan == 'y')
+        {
             A.setMoney(A.getMoney() - tong);
             giaoDich(A, '-', tong, "Rut Tien");
 
@@ -787,7 +892,8 @@ void rutTien(User& A) {
             cout << "Rut tien thanh cong! Ban vua moi rut: " << tong << " VND." << endl;
             cout << "So du con lai trong tai khoan: " << A.getMoney() << " VND." << endl;
         }
-        else {
+        else
+        {
             cout << "Da huy giao dich." << endl;
         }
 
@@ -796,18 +902,21 @@ void rutTien(User& A) {
     }
 }
 
-void xemLichSugiaoDich(User A) {
+void xemLichSugiaoDich(User A)
+{
     system("cls");
     cout << "\t\t\t  <<>> LICH SU GIAO DICH <<>> " << endl;
     stack<GiaoDich> lichSu = A.lichSu;
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(h, 13);
-    if (lichSu.empty()) {
+    if (lichSu.empty())
+    {
         cout << "Tai khoan cua ban chua co thuc hien cuoc giao dich nao trong hom nay." << endl;
         system("pause");
         return;
     }
-    while (!lichSu.empty()) {
+    while (!lichSu.empty())
+    {
         GiaoDich gd = lichSu.top();
         lichSu.pop();
 
@@ -826,7 +935,8 @@ void xemLichSugiaoDich(User A) {
     return;
 }
 
-void chuyenTien(User& A, List& l) {
+void chuyenTien(User &A, List &l)
+{
     system("cls");
     cout << "\t\t\t  <<>> CHUYEN TIEN <<>> " << endl;
     string id;
@@ -835,31 +945,38 @@ void chuyenTien(User& A, List& l) {
     SetConsoleTextAttribute(h, 10);
 
     cout << "Nhap ID tai khoan can chuyen den (nhap exit de quay lai Menu)." << endl;
-    do {
+    do
+    {
         SetConsoleTextAttribute(h, 2);
         cout << "ID: ";
         cin >> id;
         SetConsoleTextAttribute(h, 13);
-        if (id == "exit" || id == "EXIT") {
+        if (id == "exit" || id == "EXIT")
+        {
             cout << "Quay lai Menu" << endl;
             system("pause");
             return;
         }
-        if (id.size() != 14) cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
+        if (id.size() != 14)
+            cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
     } while (id.size() != 14);
 
-    Node* p = l._pHead;
-    while (p != NULL) {
-        if (id == p->value.getID()) {
+    Node *p = l._pHead;
+    while (p != NULL)
+    {
+        if (id == p->value.getID())
+        {
             SetConsoleTextAttribute(h, 13);
 
-            if (p->value.getID() == A.getID()) {
+            if (p->value.getID() == A.getID())
+            {
                 cout << "Chuyen khoan that bai, ID chuyen tien khong the trung voi ID chuyen toi!" << endl;
                 system("pause");
                 return;
             }
 
-            if (p->value.getKhoa() == true) {
+            if (p->value.getKhoa() == true)
+            {
                 cout << "Tai khoan dich dang bi khoa, khong the chuyen tien!" << endl;
                 system("pause");
                 return;
@@ -869,7 +986,8 @@ void chuyenTien(User& A, List& l) {
             cout << "Ten nguoi nhan: " << p->value.getName() << endl;
             cout << "So du hien co trong tai khoan cua ban: " << A.getMoney() << "VND." << endl;
 
-            if (A.getMoney() < 50000) {
+            if (A.getMoney() < 50000)
+            {
                 cout << "Ban khong du tien de thuc hien, vui long nap them." << endl;
                 system("pause");
                 return;
@@ -877,21 +995,26 @@ void chuyenTien(User& A, List& l) {
 
             SetConsoleTextAttribute(h, 2);
             cout << "Vui long cho so tien de chuyen(>= 50.000 va phai la boi so cua 50.000)"
-                << endl << "(hoac nhap 0 de quay lai Menu va huy tat ca giao dich) VND: ";
+                 << endl
+                 << "(hoac nhap 0 de quay lai Menu va huy tat ca giao dich) VND: ";
 
-            do {
+            do
+            {
                 cin >> chuyen;
-                if (chuyen == 0) {
+                if (chuyen == 0)
+                {
                     cout << "Quay lai Menu" << endl;
                     system("pause");
                     return;
                 }
-                if (chuyen < 50000 || chuyen % 50000 != 0) {
+                if (chuyen < 50000 || chuyen % 50000 != 0)
+                {
                     cout << "So tien phai lon hon hoac bang 50.000 va la boi so cua 50.000, vui long nhap lai: ";
                 }
             } while (chuyen < 50000 || chuyen % 50000 != 0);
 
-            if (A.getMoney() - chuyen < 50000) {
+            if (A.getMoney() - chuyen < 50000)
+            {
                 cout << "So du hien tai khong du, vui long nap them.";
                 system("pause");
                 return;
@@ -900,7 +1023,8 @@ void chuyenTien(User& A, List& l) {
             cout << "Xac nhan giao dich? (Y/N): ";
             cin >> xacNhan;
 
-            if (xacNhan != 'Y' && xacNhan != 'y') {
+            if (xacNhan != 'Y' && xacNhan != 'y')
+            {
                 cout << "Da huy giao dich." << endl;
                 system("pause");
                 return;
@@ -930,41 +1054,50 @@ void chuyenTien(User& A, List& l) {
     cout << "Chuyen khoan that bai, ID can chuyen khong ton tai!" << endl;
     system("pause");
     return;
-
 }
 
-void capNhatFileTheTu(List l) {
+void capNhatFileTheTu(List l)
+{
     ofstream out1("TheTu.txt");
-    Node* p = l._pHead;
-    while (p != NULL) {
+    Node *p = l._pHead;
+    while (p != NULL)
+    {
         out1 << p->value.getID() << endl;
         out1 << p->value.getPIN() << endl;
-        if (p->value.getKhoa() == false) out1 << "0" << endl;
-        if (p->value.getKhoa() == true) out1 << "1" << endl;
+        if (p->value.getKhoa() == false)
+            out1 << "0" << endl;
+        if (p->value.getKhoa() == true)
+            out1 << "1" << endl;
         p = p->_pNext;
     }
 }
 
-void capNhatFileID(List l) {
-    ofstream out3("[ID].txt");
-    Node* p = l._pHead;
-    while (p != NULL) {
+void capNhatFileID(List l)
+{
+    Node *p = l._pHead;
+    while (p != NULL)
+    {
+        ofstream out3(p->value.getID() + ".txt");
         out3 << p->value.getID() << endl;
         out3 << p->value.getName() << endl;
         out3 << p->value.getMoney() << endl;
         out3 << p->value.getISO() << endl;
+        out3.close();
         p = p->_pNext;
     }
-    out3.close();
 }
 
-void capNhatFileLichSu(List l) {
-    ofstream out2("[LichSuID].txt");
-    Node* p = l._pHead;
-    while (p != NULL) {
-        if (!p->value.lichSu.empty()) {
+void capNhatFileLichSu(List l)
+{
+    Node *p = l._pHead;
+    while (p != NULL)
+    {
+        if (!p->value.lichSu.empty())
+        {
+            ofstream out2("LichSu" + p->value.getID() + ".txt");
             stack<GiaoDich> lichSu = p->value.lichSu;
-            while (!lichSu.empty()) {
+            while (!lichSu.empty())
+            {
                 GiaoDich gd = lichSu.top();
                 lichSu.pop();
 
@@ -976,22 +1109,26 @@ void capNhatFileLichSu(List l) {
                 out2 << endl;
                 out2 << gd.tien << endl;
             }
+            out2.close();
         }
         p = p->_pNext;
     }
-    out2.close();
 }
 
-void docFileTheTu(List& l) {
+void docFileTheTu(List &l)
+{
     ifstream in3("TheTu.txt");
     string id, pin, khoa;
 
     while (getline(in3, id) && getline(in3, pin) &&
-        getline(in3, khoa)) {
+           getline(in3, khoa))
+    {
 
-        Node* p = l._pHead;
-        while (p != NULL) {
-            if (p->value.getID() == id) {
+        Node *p = l._pHead;
+        while (p != NULL)
+        {
+            if (p->value.getID() == id)
+            {
                 p->value.setKhoa(khoa == "1");
                 break;
             }
@@ -1001,7 +1138,8 @@ void docFileTheTu(List& l) {
     in3.close();
 }
 
-int main() {
+int main()
+{
     List Admin;
 
     IntList(Admin);
@@ -1009,7 +1147,8 @@ int main() {
     ifstream in1("Admin.txt");
     int i = 0;
     string user, pass;
-    while (in1 >> user && in1 >> pass) {
+    while (in1 >> user && in1 >> pass)
+    {
         Admin.setUseri(user, i);
         Admin.setPassi(pass, i);
         i++;
@@ -1020,7 +1159,8 @@ int main() {
     ifstream in3("TheTu.txt");
     string id, name, iso, id2, pin, khoa;
     unsigned long money;
-    while (in2 >> id) {
+    while (in2 >> id)
+    {
         in2.ignore();
         getline(in2, name);
         in2 >> money;
@@ -1029,29 +1169,34 @@ int main() {
 
         in3 >> pin;
         in3 >> khoa;
-        if (pin == "") pin = "123456";
+        if (pin == "")
+            pin = "123456";
         User tmp(id, pin, name, money, iso);
-        if (khoa == "1") tmp.setKhoa(true);
-        if (khoa == "0") tmp.setKhoa(false);
+        if (khoa == "1")
+            tmp.setKhoa(true);
+        if (khoa == "0")
+            tmp.setKhoa(false);
         addCus(Admin, getNode(tmp));
-
     }
     in2.close();
     in3.close();
 
-
     ifstream in4("[LichSuID].txt");
-    while (in4 >> id) {
+    while (in4 >> id)
+    {
         string tg, loai, tien, thongdiep = "";
         in4.ignore();
         getline(in4, tg);
         getline(in4, loai);
         in4 >> tien;
 
-        for (int j = 0; j < loai.size(); j++) {
-            if (loai[j] == ':') {
+        for (int j = 0; j < loai.size(); j++)
+        {
+            if (loai[j] == ':')
+            {
                 int q;
-                for (q = j + 1; q < loai.size(); q++) {
+                for (q = j + 1; q < loai.size(); q++)
+                {
                     thongdiep = thongdiep + loai[q];
                 }
                 loai.erase(loai.begin() + j, loai.begin() + q);
@@ -1065,9 +1210,11 @@ int main() {
         gd.tien = tien;
         gd.thongDiep = thongdiep;
 
-        Node* p = Admin._pHead;
-        while (p != NULL) {
-            if (p->value.getID() == id) {
+        Node *p = Admin._pHead;
+        while (p != NULL)
+        {
+            if (p->value.getID() == id)
+            {
                 p->value.lichSu.push(gd);
             }
             p = p->_pNext;
@@ -1079,7 +1226,8 @@ int main() {
     capNhatFileTheTu(Admin);
     capNhatFileLichSu(Admin);
 
-    while (true) {
+    while (true)
+    {
         MenuSanh();
         int tmp;
         string chon;
@@ -1087,47 +1235,63 @@ int main() {
         bool MenuU = true;
         HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(h, 2);
-        do {
-            cout << "Vui long chon: ";  cin >> chon;
-            if (chon != "1" && chon != "2" && chon != "3") cout << "Ban da chon sai, vui long chon lai." << endl;
+        do
+        {
+            cout << "Vui long chon: ";
+            cin >> chon;
+            if (chon != "1" && chon != "2" && chon != "3")
+                cout << "Ban da chon sai, vui long chon lai." << endl;
         } while (chon != "1" && chon != "2" && chon != "3");
         tmp = stoi(chon);
-        switch (tmp) {
-        case 1: {
-            if (dangNhapAdmin(Admin) == true) {
-                do {
+        switch (tmp)
+        {
+        case 1:
+        {
+            if (dangNhapAdmin(Admin) == true)
+            {
+                do
+                {
                     MenuAdmin();
                     int tmp1;
-                    do {
-                        cout << "Vui long chon: ";  cin >> chon;
-                        if (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5") cout << "Ban da chon sai, vui long chon lai." << endl;
+                    do
+                    {
+                        cout << "Vui long chon: ";
+                        cin >> chon;
+                        if (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5")
+                            cout << "Ban da chon sai, vui long chon lai." << endl;
                     } while (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5");
                     tmp1 = stoi(chon);
-                    switch (tmp1) {
-                    case 1: {
+                    switch (tmp1)
+                    {
+                    case 1:
+                    {
                         xemDanhSachTaiKhoan(Admin);
                         break;
                     }
-                    case 2: {
+                    case 2:
+                    {
                         themTaiKhoan(Admin);
                         capNhatFileID(Admin);
                         capNhatFileTheTu(Admin);
                         break;
                     }
-                    case 3: {
+                    case 3:
+                    {
                         xoaTaiKhoan(Admin);
                         capNhatFileID(Admin);
                         capNhatFileTheTu(Admin);
                         break;
                     }
-                    case 4: {
+                    case 4:
+                    {
                         moKhoaTaiKhoan(Admin);
                         capNhatFileID(Admin);
                         capNhatFileTheTu(Admin);
 
                         break;
                     }
-                    case 5: {
+                    case 5:
+                    {
                         MenuA = false;
                         break;
                     }
@@ -1136,56 +1300,70 @@ int main() {
             }
             break;
         }
-        case 2: {
-            Node* p = dangNhapUser(Admin);
+        case 2:
+        {
+            Node *p = dangNhapUser(Admin);
             capNhatFileTheTu(Admin);
             capNhatFileID(Admin);
-            if (p != NULL) {
-                do {
+            if (p != NULL)
+            {
+                do
+                {
                     MenuUser(p->value);
                     int tmp2;
-                    do {
-                        cout << "Vui long chon: ";  cin >> chon;
-                        if (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5" && chon != "6" && chon != "7") cout << "Ban da chon sai, vui long chon lai." << endl;
+                    do
+                    {
+                        cout << "Vui long chon: ";
+                        cin >> chon;
+                        if (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5" && chon != "6" && chon != "7")
+                            cout << "Ban da chon sai, vui long chon lai." << endl;
                     } while (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5" && chon != "6" && chon != "7");
                     tmp2 = stoi(chon);
-                    switch (tmp2) {
-                    case 1: {
+                    switch (tmp2)
+                    {
+                    case 1:
+                    {
                         xemThongTin(p->value);
                         break;
                     }
-                    case 2: {
+                    case 2:
+                    {
                         napTien(p->value);
                         capNhatFileID(Admin);
                         capNhatFileTheTu(Admin);
                         capNhatFileLichSu(Admin);
                         break;
                     }
-                    case 3: {
+                    case 3:
+                    {
                         rutTien(p->value);
                         capNhatFileID(Admin);
                         capNhatFileTheTu(Admin);
                         capNhatFileLichSu(Admin);
                         break;
                     }
-                    case 4: {
+                    case 4:
+                    {
                         chuyenTien(p->value, Admin);
                         capNhatFileID(Admin);
                         capNhatFileTheTu(Admin);
                         capNhatFileLichSu(Admin);
                         break;
                     }
-                    case 5: {
+                    case 5:
+                    {
                         xemLichSugiaoDich(p->value);
                         break;
                     }
-                    case 6: {
+                    case 6:
+                    {
                         doiMaPin(p->value);
                         capNhatFileID(Admin);
                         capNhatFileTheTu(Admin);
                         break;
                     }
-                    case 7: {
+                    case 7:
+                    {
                         MenuU = false;
                         break;
                     }
@@ -1194,7 +1372,8 @@ int main() {
             }
             break;
         }
-        case 3: {
+        case 3:
+        {
             return 0;
         }
         }
