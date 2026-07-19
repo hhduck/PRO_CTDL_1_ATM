@@ -378,12 +378,27 @@ void xoaTaiKhoan(List &l)
     SetConsoleTextAttribute(h, 13);
     Node *p = l._pHead;
 
+    if (p != NULL && id == p->value.getID())
+    {
+        cout << "Xoa tai khoan thanh cong!" << endl;
+        cout << "Da xoa " << p->value.getName() << " ra khoi he thong." << endl;
+        remove((p->value.getID() + ".txt").c_str());
+        remove(("LichSu" + p->value.getID() + ".txt").c_str());
+        l._pHead = p->_pNext;
+        if (l._pHead == NULL)
+            l._pTail = NULL;
+        system("pause");
+        return;
+    }
+
     while (p->_pNext != NULL)
     {
         if (id == p->_pNext->value.getID())
         {
             cout << "Xoa tai khoan thanh cong!" << endl;
             cout << "Da xoa " << p->_pNext->value.getName() << " ra khoi he thong." << endl;
+            remove((p->_pNext->value.getID() + ".txt").c_str());
+            remove(("LichSu" + p->_pNext->value.getID() + ".txt").c_str());
             p->_pNext = p->_pNext->_pNext;
             system("pause");
             return;
