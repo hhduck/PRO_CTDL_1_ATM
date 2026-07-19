@@ -131,11 +131,8 @@ public:
 
     List()
     {
-        for (int i = 0; i < 6; i++)
-        {
-            user[i] = "Admin1";
-            pass[i] = "123456";
-        }
+        _pHead = NULL;
+        _pTail = NULL;
     }
     string getUseri(int i) { return user[i]; }
     string getPassi(int i) { return pass[i]; }
@@ -144,10 +141,6 @@ public:
     void setPassi(string pass, int i) { this->pass[i] = pass; }
 };
 
-void IntList(List &l)
-{
-    l._pHead = l._pTail = NULL;
-}
 
 Node *getNode(User c)
 {
@@ -1157,7 +1150,6 @@ int main()
 {
     List Admin;
 
-    IntList(Admin);
 
     ifstream in1("Admin.txt");
     int i = 0;
