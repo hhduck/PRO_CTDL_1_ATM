@@ -878,7 +878,7 @@ void rutTien(User &A)
             if (rut < 50000 || rut % 50000 != 0)
                 cout << "So tien rut phai lon hon hoac bang 50.000 va la boi so cua 50.000 de rut, vui long nhap lai.";
         } while (rut < 50000 || rut % 50000 != 0);
-        if (A.getMoney() - rut < 50000)
+        if (A.getMoney() < tong + rut + 50000)
         {
             SetConsoleTextAttribute(h, 13);
             cout << "So du hien tai khong du, vui long nap them." << endl;
