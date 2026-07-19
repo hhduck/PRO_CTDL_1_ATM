@@ -1155,72 +1155,73 @@ int main()
     }
     in1.close();
 
-    ifstream in2("[ID].txt");
     ifstream in3("TheTu.txt");
-    string id, name, iso, id2, pin, khoa;
+    string id, name, iso, pin, khoa;
     unsigned long money;
-    while (in2 >> id)
+    while (in3 >> id)
     {
-        in2.ignore();
-        getline(in2, name);
-        in2 >> money;
-        in2 >> iso;
-        in3 >> id2;
-
         in3 >> pin;
         in3 >> khoa;
         if (pin == "")
             pin = "123456";
+
+        ifstream in2(id + ".txt");
+        in2.ignore();
+        getline(in2, name);
+        in2 >> money;
+        in2 >> iso;
+        in2.close();
+
         User tmp(id, pin, name, money, iso);
         if (khoa == "1")
             tmp.setKhoa(true);
         if (khoa == "0")
             tmp.setKhoa(false);
         addCus(Admin, getNode(tmp));
-    }
-    in2.close();
-    in3.close();
 
-    ifstream in4("[LichSuID].txt");
-    while (in4 >> id)
-    {
-        string tg, loai, tien, thongdiep = "";
-        in4.ignore();
-        getline(in4, tg);
-        getline(in4, loai);
-        in4 >> tien;
-
-        for (int j = 0; j < loai.size(); j++)
+        ifstream in4("LichSu" + id + ".txt");
+        string lsid;
+        while (in4 >> lsid)
         {
-            if (loai[j] == ':')
+            string tg, loai, tien, thongdiep = "";
+            in4.ignore();
+            getline(in4, tg);
+            getline(in4, loai);
+            in4 >> tien;
+
+            for (int j = 0; j < loai.size(); j++)
             {
-                int q;
-                for (q = j + 1; q < loai.size(); q++)
+                if (loai[j] == ':')
                 {
-                    thongdiep = thongdiep + loai[q];
+                    int q;
+                    for (q = j + 1; q < loai.size(); q++)
+                    {
+                        thongdiep = thongdiep + loai[q];
+                    }
+                    loai.erase(loai.begin() + j, loai.begin() + q);
+                    loai.erase(loai.begin() + loai.size() - 15, loai.begin() + loai.size());
+                    break;
                 }
-                loai.erase(loai.begin() + j, loai.begin() + q);
-                loai.erase(loai.begin() + loai.size() - 15, loai.begin() + loai.size());
-                break;
             }
-        }
-        GiaoDich gd;
-        gd.thoiGian = tg;
-        gd.loai = loai;
-        gd.tien = tien;
-        gd.thongDiep = thongdiep;
+            GiaoDich gd;
+            gd.thoiGian = tg;
+            gd.loai = loai;
+            gd.tien = tien;
+            gd.thongDiep = thongdiep;
 
-        Node *p = Admin._pHead;
-        while (p != NULL)
-        {
-            if (p->value.getID() == id)
+            Node *p = Admin._pHead;
+            while (p != NULL)
             {
-                p->value.lichSu.push(gd);
+                if (p->value.getID() == lsid)
+                {
+                    p->value.lichSu.push(gd);
+                }
+                p = p->_pNext;
             }
-            p = p->_pNext;
         }
+        in4.close();
     }
-    in4.close();
+    in3.close();
 
     capNhatFileID(Admin);
     capNhatFileTheTu(Admin);
