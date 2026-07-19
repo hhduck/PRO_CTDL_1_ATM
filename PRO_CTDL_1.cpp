@@ -141,7 +141,6 @@ public:
     void setPassi(string pass, int i) { this->pass[i] = pass; }
 };
 
-
 Node *getNode(User c)
 {
     Node *p = new Node();
@@ -1149,7 +1148,6 @@ void docFileTheTu(List &l)
 int main()
 {
     List Admin;
-
 
     ifstream in1("Admin.txt");
     int i = 0;
