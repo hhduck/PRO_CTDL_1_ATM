@@ -154,10 +154,6 @@ public:
 
 class List
 {
-private:
-    string user[100];
-    string pass[100];
-
 public:
     Node *_pHead;
     Node *_pTail;
@@ -167,12 +163,54 @@ public:
         _pHead = NULL;
         _pTail = NULL;
     }
-    string getUseri(int i) { return user[i]; }
-    string getPassi(int i) { return pass[i]; }
-
-    void setUseri(string user, int i) { this->user[i] = user; }
-    void setPassi(string pass, int i) { this->pass[i] = pass; }
 };
+
+struct Admin
+{
+    string user;
+    string pass;
+};
+
+class AdminNode
+{
+public:
+    Admin value;
+    AdminNode *_pNext;
+};
+
+class AdminList
+{
+public:
+    AdminNode *_pHead;
+    AdminNode *_pTail;
+
+    AdminList()
+    {
+        _pHead = NULL;
+        _pTail = NULL;
+    }
+};
+
+AdminNode *getAdminNode(Admin a)
+{
+    AdminNode *p = new AdminNode();
+    p->value = a;
+    p->_pNext = NULL;
+    return p;
+}
+
+void addAdminNode(AdminList &l, AdminNode *p)
+{
+    if (l._pHead == NULL)
+    {
+        l._pHead = l._pTail = p;
+    }
+    else
+    {
+        l._pTail->_pNext = p;
+        l._pTail = p;
+    }
+}
 
 Node *getNode(User c)
 {
@@ -294,7 +332,7 @@ void themTaiKhoan(List &l)
     {
         for (char c : name)
         {
-            if (!isalpha(c) && c != ' ')
+            if (!isalpha((unsigned char)c) && c != ' ')
             {
                 return false;
             }
@@ -498,7 +536,7 @@ void moKhoaTaiKhoan(List &l)
     return;
 }
 
-bool dangNhapAdmin(List l)
+bool dangNhapAdmin(AdminList l)
 {
     string user, pass;
     char ast = ' ';
@@ -510,9 +548,10 @@ bool dangNhapAdmin(List l)
     SetConsoleTextAttribute(h, 2);
     cout << "User: ";
     cin >> user;
-    for (int i = 0; i < 6; i++)
+    AdminNode *pAdmin = l._pHead;
+    while (pAdmin != NULL)
     {
-        if (l.getUseri(i) == user)
+        if (pAdmin->value.user == user)
         {
             do
             {
@@ -552,7 +591,7 @@ bool dangNhapAdmin(List l)
                 } while (ast != 13 || ast != ' ');
                 cout << endl;
 
-                if (l.getPassi(i) == pass)
+                if (pAdmin->value.pass == pass)
                 {
                     SetConsoleTextAttribute(h, 13);
                     cout << "Dang nhap Admin thanh cong, xin chao " << user << "." << endl;
@@ -560,15 +599,16 @@ bool dangNhapAdmin(List l)
                     return true;
                 }
 
-                if (l.getPassi(i) != pass)
+                if (pAdmin->value.pass != pass)
                 {
                     SetConsoleTextAttribute(h, 13);
                     cout << "Mat khau nhap sai, vui long nhap lai." << endl;
                     dem++;
                 }
 
-            } while (l.getPassi(i) != pass);
+            } while (pAdmin->value.pass != pass);
         }
+        pAdmin = pAdmin->_pNext;
     }
     SetConsoleTextAttribute(h, 13);
     cout << "Dang nhap that bai, tai khoan hoac mat khau cua ban nhap sai." << endl;
@@ -1104,8 +1144,8 @@ void chuyenTien(User &A, List &l)
             cin.ignore();
             getline(cin, thongdiep);
 
-            giaoDich(A, '-', chuyen, "Chuyen Tien toi " + p->value.getName(), thongdiep);
-            giaoDich(p->value, '+', chuyen, "Nhan tien duoc gui tu " + A.getName(), thongdiep);
+            giaoDich(A, '-', chuyen, "Chuyen Tien toi ID " + p->value.getID() + " (" + p->value.getName() + ")", thongdiep);
+            giaoDich(p->value, '+', chuyen, "Nhan tien tu ID " + A.getID() + " (" + A.getName() + ")", thongdiep);
 
             SetConsoleTextAttribute(h, 13);
             cout << "Chuyen tien thanh cong! Ban vua moi chuyen: " << chuyen << "VND cho " << p->value.getName() << endl;
@@ -1158,25 +1198,22 @@ void capNhatFileLichSu(List l)
     Node *p = l._pHead;
     while (p != NULL)
     {
-        if (!p->value.lichSu.empty())
+        ofstream out2("LichSu" + p->value.getID() + ".txt");
+        stack<GiaoDich> lichSu = p->value.lichSu;
+        while (!lichSu.empty())
         {
-            ofstream out2("LichSu" + p->value.getID() + ".txt");
-            stack<GiaoDich> lichSu = p->value.lichSu;
-            while (!lichSu.empty())
-            {
-                GiaoDich gd = lichSu.top();
-                lichSu.pop();
+            GiaoDich gd = lichSu.top();
+            lichSu.pop();
 
-                out2 << p->value.getID() << endl;
-                out2 << gd.thoiGian << endl;
-                out2 << gd.loai;
-                if (gd.thongDiep != "")
-                    out2 << " voi thong diep: " << gd.thongDiep;
-                out2 << endl;
-                out2 << gd.tien << endl;
-            }
-            out2.close();
+            out2 << p->value.getID() << endl;
+            out2 << gd.thoiGian << endl;
+            out2 << gd.loai;
+            if (gd.thongDiep != "")
+                out2 << " voi thong diep: " << gd.thongDiep;
+            out2 << endl;
+            out2 << gd.tien << endl;
         }
+        out2.close();
         p = p->_pNext;
     }
 }
@@ -1206,22 +1243,22 @@ void docFileTheTu(List &l)
 
 int main()
 {
-    List Admin;
+    AdminList DSAdmin;
+    List DSKhachHang;
 
     ifstream in1("Admin.txt");
-    int i = 0;
     string user, pass;
     while (in1 >> user && in1 >> pass)
     {
-        Admin.setUseri(user, i);
-        Admin.setPassi(pass, i);
-        i++;
+        Admin a;
+        a.user = user;
+        a.pass = pass;
+        addAdminNode(DSAdmin, getAdminNode(a));
     }
     in1.close();
 
     ifstream in3("TheTu.txt");
-    string id, name, iso, pin, khoa;
-    unsigned long money;
+    string id, pin, khoa;
     while (in3 >> id)
     {
         in3 >> pin;
@@ -1229,19 +1266,30 @@ int main()
         if (pin == "")
             pin = "123456";
 
+        string name = "Null";
+        unsigned long money = 0;
+        string iso = "VND";
+
         ifstream in2(id + ".txt");
-        in2.ignore();
-        getline(in2, name);
-        in2 >> money;
-        in2 >> iso;
-        in2.close();
+        if (in2.is_open())
+        {
+            in2.ignore();
+            getline(in2, name);
+            in2 >> money;
+            in2 >> iso;
+            in2.close();
+        }
+        else
+        {
+            cout << "[CANH BAO] Khong tim thay file " << id << ".txt, du lieu tai khoan nay se duoc khoi tao mac dinh." << endl;
+        }
 
         User tmp(id, pin, name, money, iso);
         if (khoa == "1")
             tmp.setKhoa(true);
         if (khoa == "0")
             tmp.setKhoa(false);
-        addCus(Admin, getNode(tmp));
+        addCus(DSKhachHang, getNode(tmp));
 
         ifstream in4("LichSu" + id + ".txt");
         string lsid;
@@ -1273,7 +1321,7 @@ int main()
             gd.tien = tien;
             gd.thongDiep = thongdiep;
 
-            Node *p = Admin._pHead;
+            Node *p = DSKhachHang._pHead;
             while (p != NULL)
             {
                 if (p->value.getID() == lsid)
@@ -1287,9 +1335,9 @@ int main()
     }
     in3.close();
 
-    capNhatFileID(Admin);
-    capNhatFileTheTu(Admin);
-    capNhatFileLichSu(Admin);
+    capNhatFileID(DSKhachHang);
+    capNhatFileTheTu(DSKhachHang);
+    capNhatFileLichSu(DSKhachHang);
 
     while (true)
     {
@@ -1312,7 +1360,7 @@ int main()
         {
         case 1:
         {
-            if (dangNhapAdmin(Admin) == true)
+            if (dangNhapAdmin(DSAdmin) == true)
             {
                 do
                 {
@@ -1330,28 +1378,29 @@ int main()
                     {
                     case 1:
                     {
-                        xemDanhSachTaiKhoan(Admin);
+                        xemDanhSachTaiKhoan(DSKhachHang);
                         break;
                     }
                     case 2:
                     {
-                        themTaiKhoan(Admin);
-                        capNhatFileID(Admin);
-                        capNhatFileTheTu(Admin);
+                        themTaiKhoan(DSKhachHang);
+                        capNhatFileID(DSKhachHang);
+                        capNhatFileTheTu(DSKhachHang);
+                        capNhatFileLichSu(DSKhachHang);
                         break;
                     }
                     case 3:
                     {
-                        xoaTaiKhoan(Admin);
-                        capNhatFileID(Admin);
-                        capNhatFileTheTu(Admin);
+                        xoaTaiKhoan(DSKhachHang);
+                        capNhatFileID(DSKhachHang);
+                        capNhatFileTheTu(DSKhachHang);
                         break;
                     }
                     case 4:
                     {
-                        moKhoaTaiKhoan(Admin);
-                        capNhatFileID(Admin);
-                        capNhatFileTheTu(Admin);
+                        moKhoaTaiKhoan(DSKhachHang);
+                        capNhatFileID(DSKhachHang);
+                        capNhatFileTheTu(DSKhachHang);
 
                         break;
                     }
@@ -1367,9 +1416,9 @@ int main()
         }
         case 2:
         {
-            Node *p = dangNhapUser(Admin);
-            capNhatFileTheTu(Admin);
-            capNhatFileID(Admin);
+            Node *p = dangNhapUser(DSKhachHang);
+            capNhatFileTheTu(DSKhachHang);
+            capNhatFileID(DSKhachHang);
             if (p != NULL)
             {
                 do
@@ -1394,25 +1443,25 @@ int main()
                     case 2:
                     {
                         napTien(p->value);
-                        capNhatFileID(Admin);
-                        capNhatFileTheTu(Admin);
-                        capNhatFileLichSu(Admin);
+                        capNhatFileID(DSKhachHang);
+                        capNhatFileTheTu(DSKhachHang);
+                        capNhatFileLichSu(DSKhachHang);
                         break;
                     }
                     case 3:
                     {
                         rutTien(p->value);
-                        capNhatFileID(Admin);
-                        capNhatFileTheTu(Admin);
-                        capNhatFileLichSu(Admin);
+                        capNhatFileID(DSKhachHang);
+                        capNhatFileTheTu(DSKhachHang);
+                        capNhatFileLichSu(DSKhachHang);
                         break;
                     }
                     case 4:
                     {
-                        chuyenTien(p->value, Admin);
-                        capNhatFileID(Admin);
-                        capNhatFileTheTu(Admin);
-                        capNhatFileLichSu(Admin);
+                        chuyenTien(p->value, DSKhachHang);
+                        capNhatFileID(DSKhachHang);
+                        capNhatFileTheTu(DSKhachHang);
+                        capNhatFileLichSu(DSKhachHang);
                         break;
                     }
                     case 5:
@@ -1423,8 +1472,8 @@ int main()
                     case 6:
                     {
                         doiMaPin(p->value);
-                        capNhatFileID(Admin);
-                        capNhatFileTheTu(Admin);
+                        capNhatFileID(DSKhachHang);
+                        capNhatFileTheTu(DSKhachHang);
                         break;
                     }
                     case 7:
