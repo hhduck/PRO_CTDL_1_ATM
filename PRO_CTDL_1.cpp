@@ -1036,6 +1036,13 @@ void chuyenTien(User &A, List &l)
             do
             {
                 cin >> chuyen;
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "So tien phai lon hon hoac bang 50.000 va la boi so cua 50.000, vui long nhap lai: ";
+                    continue;
+                }
                 if (chuyen == 0)
                 {
                     cout << "Quay lai Menu" << endl;
