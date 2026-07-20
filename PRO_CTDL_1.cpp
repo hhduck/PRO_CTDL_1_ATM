@@ -11,6 +11,39 @@
 #include <limits>
 using namespace std;
 
+bool nhapSoKhongDauAnToan(unsigned long &ketQua)
+{
+    string raw;
+    cin >> raw;
+
+    if (cin.fail())
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        return false;
+    }
+
+    if (raw.empty())
+        return false;
+
+    for (char c : raw)
+    {
+        if (!isdigit((unsigned char)c))
+            return false;
+    }
+
+    try
+    {
+        ketQua = stoul(raw);
+    }
+    catch (...)
+    {
+        return false;
+    }
+
+    return true;
+}
+
 struct GiaoDich
 {
     string tien;
@@ -287,19 +320,9 @@ void themTaiKhoan(List &l)
     bool hopLeMoney;
     do
     {
-        cin >> money;
-        hopLeMoney = !cin.fail();
+        hopLeMoney = nhapSoKhongDauAnToan(money);
         if (!hopLeMoney)
-        {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             cout << "Vui long nhap so hop le!!!" << endl;
-        }
-        else if (money < 0)
-        {
-            cout << "Tien tao tai khoan khong the la so am!!!" << endl;
-            hopLeMoney = false;
-        }
     } while (!hopLeMoney);
 
     cout << "Don vi tien te: ";
@@ -823,20 +846,19 @@ void napTien(User &A)
         } while (menhgia != "10000" && menhgia != "20000" && menhgia != "50000" && menhgia != "100000" && menhgia != "200000" && menhgia != "500000");
 
         cout << "Nhap so to (1 - 100): ";
+        unsigned long sotoTmp;
+        bool hopLeSoto;
         do
         {
-            cin >> soto;
-            if (cin.fail())
-            {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            }
-            if (soto <= 0 || soto >= 101)
+            hopLeSoto = nhapSoKhongDauAnToan(sotoTmp);
+            if (!hopLeSoto || sotoTmp <= 0 || sotoTmp >= 101)
             {
                 cout << "Ban da nhap sai so to, vui long nhap lai." << endl;
                 cout << "Nhap so to (1 - 100): ";
+                hopLeSoto = false;
             }
-        } while (soto <= 0 || soto >= 101);
+        } while (!hopLeSoto);
+        soto = (int)sotoTmp;
         tong += stoi(menhgia) * soto;
 
         SetConsoleTextAttribute(h, 13);
@@ -879,13 +901,12 @@ void rutTien(User &A)
         cout << "Vui long chon so tien de rut (>= 50.000 va phai la boi so cua 50.000)."
              << endl
              << "(hoac nhap 0 de quay lai Menu va huy tat ca giao dich) VND: ";
+        bool hopLeRut;
         do
         {
-            cin >> rut;
-            if (cin.fail())
+            hopLeRut = nhapSoKhongDauAnToan(rut);
+            if (!hopLeRut)
             {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 cout << "So tien rut phai lon hon hoac bang 50.000 va la boi so cua 50.000 de rut, vui long nhap lai.";
                 continue;
             }
@@ -896,8 +917,11 @@ void rutTien(User &A)
                 return;
             }
             if (rut < 50000 || rut % 50000 != 0)
+            {
                 cout << "So tien rut phai lon hon hoac bang 50.000 va la boi so cua 50.000 de rut, vui long nhap lai.";
-        } while (rut < 50000 || rut % 50000 != 0);
+                hopLeRut = false;
+            }
+        } while (!hopLeRut);
         if (A.getMoney() < tong + rut + 50000)
         {
             SetConsoleTextAttribute(h, 13);
@@ -1033,13 +1057,12 @@ void chuyenTien(User &A, List &l)
                  << endl
                  << "(hoac nhap 0 de quay lai Menu va huy tat ca giao dich) VND: ";
 
+            bool hopLeChuyen;
             do
             {
-                cin >> chuyen;
-                if (cin.fail())
+                hopLeChuyen = nhapSoKhongDauAnToan(chuyen);
+                if (!hopLeChuyen)
                 {
-                    cin.clear();
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
                     cout << "So tien phai lon hon hoac bang 50.000 va la boi so cua 50.000, vui long nhap lai: ";
                     continue;
                 }
@@ -1052,10 +1075,11 @@ void chuyenTien(User &A, List &l)
                 if (chuyen < 50000 || chuyen % 50000 != 0)
                 {
                     cout << "So tien phai lon hon hoac bang 50.000 va la boi so cua 50.000, vui long nhap lai: ";
+                    hopLeChuyen = false;
                 }
-            } while (chuyen < 50000 || chuyen % 50000 != 0);
+            } while (!hopLeChuyen);
 
-            if (A.getMoney() - chuyen < 50000)
+            if (A.getMoney() < chuyen + 50000)
             {
                 cout << "So du hien tai khong du, vui long nap them.";
                 system("pause");
