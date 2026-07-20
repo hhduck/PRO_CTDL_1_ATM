@@ -307,14 +307,18 @@ void themTaiKhoan(List &l)
         if (id.size() != 14)
             cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
     } while (id.size() != 14);
-    while (p != NULL)
+    bool trung;
+    do
     {
-        if (p->value.getID() == id)
+        trung = false;
+        Node *p2 = l._pHead;
+        while (p2 != NULL)
         {
-            do
+            if (p2->value.getID() == id)
             {
+                trung = true;
                 cout << "ID nay da ton tai, vui long nhap ID moi!!" << endl;
-                cout << p->value << endl;
+                cout << p2->value << endl;
                 cout << "Hay lay ID khac." << endl;
                 do
                 {
@@ -331,11 +335,11 @@ void themTaiKhoan(List &l)
                     if (id.size() != 14)
                         cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
                 } while (id.size() != 14);
-            } while (id == p->value.getID());
-            break;
+                break;
+            }
+            p2 = p2->_pNext;
         }
-        p = p->_pNext;
-    }
+    } while (trung);
     cout << "Ma PIN mac dinh cua ban: 123456" << endl;
 
     auto isValidName = [](const string &name)
