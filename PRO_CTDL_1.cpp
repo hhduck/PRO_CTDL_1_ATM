@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <cstdio>
 #include <limits>
+#include <filesystem>
 using namespace std;
 
 bool nhapSoKhongDauAnToan(unsigned long &ketQua)
@@ -290,7 +291,6 @@ void themTaiKhoan(List &l)
     Node *p = l._pHead;
     string id, name, iso;
     unsigned long money;
-    User tmp;
     cout << "Luu y, ID khong duoc trung (nhap exit de quay lai Menu)." << endl;
     do
     {
@@ -466,7 +466,7 @@ void xoaTaiKhoan(List &l)
         return;
     }
 
-    while (p->_pNext != NULL)
+    while (p != NULL && p->_pNext != NULL)
     {
         if (id == p->_pNext->value.getID())
         {
@@ -579,7 +579,7 @@ bool dangNhapAdmin(AdminList &l)
                 do
                 {
                     ast = _getch();
-                    if (ast == 13 || ast == ' ')
+                    if (ast == 13)
                     {
                         break;
                     }
@@ -598,7 +598,7 @@ bool dangNhapAdmin(AdminList &l)
                         cout << "*";
                         aste++;
                     }
-                } while (ast != 13 || ast != ' ');
+                } while (ast != 13);
                 cout << endl;
 
                 if (pAdmin->value.pass == pass)
@@ -656,7 +656,7 @@ void maPinSao(string &pin)
     do
     {
         ast = _getch();
-        if (ast == 13 || ast == ' ')
+        if (ast == 13)
         {
             break;
         }
@@ -675,7 +675,7 @@ void maPinSao(string &pin)
             cout << "*";
             aste++;
         }
-    } while (ast != 13 || ast != ' ');
+    } while (ast != 13);
 }
 
 void doiMaPin(User &A)
@@ -901,7 +901,7 @@ void rutTien(User &A)
                 hopLeRut = false;
             }
         } while (!hopLeRut);
-        if (A.getMoney() < tong + rut + 50000)
+        if (A.getMoney() - 50000 < tong + rut)
         {
             SetConsoleTextAttribute(h, 13);
             cout << "So du hien tai khong du, vui long nap them." << endl;
@@ -1058,7 +1058,7 @@ void chuyenTien(User &A, List &l)
                 }
             } while (!hopLeChuyen);
 
-            if (A.getMoney() < chuyen + 50000)
+            if (A.getMoney() - 50000 < chuyen)
             {
                 cout << "So du hien tai khong du, vui long nap them.";
                 system("pause");
@@ -1101,7 +1101,7 @@ void chuyenTien(User &A, List &l)
     return;
 }
 
-void capNhatFileTheTu(List l)
+void capNhatFileTheTu(List &l)
 {
     ofstream out1("TheTu.txt");
     Node *p = l._pHead;
@@ -1117,7 +1117,7 @@ void capNhatFileTheTu(List l)
     }
 }
 
-void capNhatFileID(List l)
+void capNhatFileID(List &l)
 {
     Node *p = l._pHead;
     while (p != NULL)
@@ -1132,17 +1132,23 @@ void capNhatFileID(List l)
     }
 }
 
-void capNhatFileLichSu(List l)
+void capNhatFileLichSu(List &l)
 {
     Node *p = l._pHead;
     while (p != NULL)
     {
         ofstream out2("data/LichSu" + p->value.getID() + ".txt");
         stack<GiaoDich> lichSu = p->value.lichSu;
+        stack<GiaoDich> temp;
         while (!lichSu.empty())
         {
-            GiaoDich gd = lichSu.top();
+            temp.push(lichSu.top());
             lichSu.pop();
+        }
+        while (!temp.empty())
+        {
+            GiaoDich gd = temp.top();
+            temp.pop();
 
             out2 << p->value.getID() << endl;
             out2 << gd.thoiGian << endl;
@@ -1185,6 +1191,7 @@ int main()
     AdminList DSAdmin;
     List DSKhachHang;
 
+    std::filesystem::create_directory("data");
     ifstream in1("Admin.txt");
     string user, pass;
     while (in1 >> user && in1 >> pass)
@@ -1241,19 +1248,11 @@ int main()
             getline(in4, loai);
             in4 >> tien;
 
-            for (int j = 0; j < loai.size(); j++)
+            size_t pos = loai.find(" voi thong diep: ");
+            if (pos != string::npos)
             {
-                if (loai[j] == ':')
-                {
-                    int q;
-                    for (q = j + 1; q < loai.size(); q++)
-                    {
-                        thongdiep = thongdiep + loai[q];
-                    }
-                    loai.erase(loai.begin() + j, loai.begin() + q);
-                    loai.erase(loai.begin() + loai.size() - 15, loai.begin() + loai.size());
-                    break;
-                }
+                thongdiep = loai.substr(pos + 17);
+                loai.erase(pos);
             }
             GiaoDich gd;
             gd.thoiGian = tg;
@@ -1291,7 +1290,8 @@ int main()
         do
         {
             cout << "Vui long chon: ";
-            cin >> chon;
+            if (!(cin >> chon))
+                exit(0);
             if (chon != "1" && chon != "2" && chon != "3")
                 cout << "Ban da chon sai, vui long chon lai." << endl;
         } while (chon != "1" && chon != "2" && chon != "3");
@@ -1309,7 +1309,8 @@ int main()
                     do
                     {
                         cout << "Vui long chon: ";
-                        cin >> chon;
+                        if (!(cin >> chon))
+                            exit(0);
                         if (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5")
                             cout << "Ban da chon sai, vui long chon lai." << endl;
                     } while (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5");
@@ -1368,7 +1369,8 @@ int main()
                     do
                     {
                         cout << "Vui long chon: ";
-                        cin >> chon;
+                        if (!(cin >> chon))
+                            exit(0);
                         if (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5" && chon != "6")
                             cout << "Ban da chon sai, vui long chon lai." << endl;
                     } while (chon != "1" && chon != "2" && chon != "3" && chon != "4" && chon != "5" && chon != "6");
