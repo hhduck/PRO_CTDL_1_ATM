@@ -902,7 +902,7 @@ void rutTien(User &A)
         system("pause");
         return;
     }
-    else // THÊM ĐOẠN NÀY ĐỂ BẮT LỖI GÕ BẬY Ở CÂU "RÚT THÊM KHÔNG?"
+    else
     {
         SetConsoleTextAttribute(h, 12);
         cout << "Lua chon khong hop le, da huy toan bo giao dich." << endl;
