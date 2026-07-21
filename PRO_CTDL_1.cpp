@@ -384,43 +384,6 @@ void themTaiKhoan(List &l)
     return;
 }
 
-void delHead(List &l)
-{
-    if (l._pHead == NULL)
-        return;
-
-    Node *p = l._pHead;
-    l._pHead = p->_pNext;
-
-    if (l._pHead == NULL)
-        l._pTail = NULL;
-
-    delete p;
-}
-
-void delTail(List &l)
-{
-    if (l._pHead == NULL)
-        return;
-
-    if (l._pHead == l._pTail)
-    {
-        delete l._pHead;
-        l._pHead = l._pTail = NULL;
-        return;
-    }
-    Node *p = l._pHead;
-
-    while (p->_pNext != l._pTail)
-    {
-        p = p->_pNext;
-    }
-
-    delete l._pTail;
-    l._pTail = p;
-    p->_pNext = NULL;
-}
-
 void xoaTaiKhoan(List &l)
 {
     system("cls");
@@ -492,7 +455,6 @@ void moKhoaTaiKhoan(List &l)
     system("cls");
     cout << "\t\t\t  <<>> MO KHOA TAI KHOAN <<>> " << endl;
     string id;
-    int dem = 1;
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
     Node *p = l._pHead;
@@ -927,11 +889,23 @@ void rutTien(User &A)
             cout << "Rut tien thanh cong! Ban vua moi rut: " << tong << " VND." << endl;
             cout << "So du con lai trong tai khoan: " << A.getMoney() << " VND." << endl;
         }
-        else
+        else if (xacNhan == 'N' || xacNhan == 'n')
         {
             cout << "Da huy giao dich." << endl;
         }
+        else
+        {
+            SetConsoleTextAttribute(h, 12);
+            cout << "Lua chon khong hop le, da huy toan bo giao dich." << endl;
+        }
 
+        system("pause");
+        return;
+    }
+    else // THÊM ĐOẠN NÀY ĐỂ BẮT LỖI GÕ BẬY Ở CÂU "RÚT THÊM KHÔNG?"
+    {
+        SetConsoleTextAttribute(h, 12);
+        cout << "Lua chon khong hop le, da huy toan bo giao dich." << endl;
         system("pause");
         return;
     }
@@ -1160,29 +1134,6 @@ void capNhatFileLichSu(List &l)
     }
 }
 
-void docFileTheTu(List &l)
-{
-    ifstream in3("TheTu.txt");
-    string id, pin, khoa;
-
-    while (getline(in3, id) && getline(in3, pin) &&
-           getline(in3, khoa))
-    {
-
-        Node *p = l._pHead;
-        while (p != NULL)
-        {
-            if (p->value.getID() == id)
-            {
-                p->value.setKhoa(khoa == "1");
-                break;
-            }
-            p = p->_pNext;
-        }
-    }
-    in3.close();
-}
-
 int main()
 {
     AdminList DSAdmin;
@@ -1245,10 +1196,11 @@ int main()
             getline(in4, loai);
             in4 >> tien;
 
-            size_t pos = loai.find(" voi thong diep: ");
+            const string marker = " voi thong diep: ";
+            size_t pos = loai.find(marker);
             if (pos != string::npos)
             {
-                thongdiep = loai.substr(pos + 17);
+                thongdiep = loai.substr(pos + marker.length());
                 loai.erase(pos);
             }
             GiaoDich gd;
