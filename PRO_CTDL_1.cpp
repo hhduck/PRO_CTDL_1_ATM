@@ -221,19 +221,6 @@ Node *getNode(User c)
     return p;
 }
 
-void addCus(List &l, Node *p)
-{
-    if (l._pHead == NULL)
-    {
-        l._pHead = l._pTail = p;
-    }
-    else
-    {
-        p->_pNext = l._pHead;
-        l._pHead = p;
-    }
-}
-
 void addNode(List &l, Node *p)
 {
     if (l._pHead == NULL)
@@ -292,49 +279,54 @@ void themTaiKhoan(List &l)
     string id, name, iso;
     unsigned long money;
     cout << "Luu y, ID khong duoc trung (nhap exit de quay lai Menu)." << endl;
-    do
+
+    auto isValidIDStr = [](const string &s)
     {
-        SetConsoleTextAttribute(h, 2);
-        cout << "Nhap ID (14 chu so): ";
-        cin >> id;
-        SetConsoleTextAttribute(h, 13);
-        if (id == "exit" || id == "EXIT")
+        if (s.size() != 14)
+            return false;
+        for (char c : s)
         {
-            cout << "Quay lai Menu" << endl;
-            system("pause");
-            return;
+            if (!isdigit((unsigned char)c))
+                return false;
         }
-        if (id.size() != 14)
-            cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
-    } while (id.size() != 14);
+        return true;
+    };
+
     bool trung;
     do
     {
         trung = false;
+
+        do
+        {
+            SetConsoleTextAttribute(h, 2);
+            cout << "Nhap ID (14 chu so): ";
+            cin >> id;
+            SetConsoleTextAttribute(h, 13);
+            if (id == "exit" || id == "EXIT")
+            {
+                cout << "Quay lai Menu" << endl;
+                system("pause");
+                return;
+            }
+            if (!isValidIDStr(id))
+            {
+                SetConsoleTextAttribute(h, 12);
+                cout << "ID khong hop le! ID phai gom dung 14 chu so." << endl;
+                SetConsoleTextAttribute(h, 13);
+            }
+        } while (!isValidIDStr(id));
+
         Node *p2 = l._pHead;
         while (p2 != NULL)
         {
             if (p2->value.getID() == id)
             {
                 trung = true;
-                cout << "ID nay da ton tai, vui long nhap ID moi!!" << endl;
-                cout << p2->value << endl;
-                cout << "Hay lay ID khac." << endl;
-                do
-                {
-                    SetConsoleTextAttribute(h, 2);
-                    cout << "Nhap ID (14 chu so): ";
-                    cin >> id;
-                    SetConsoleTextAttribute(h, 13);
-                    if (id == "exit" || id == "EXIT")
-                    {
-                        cout << "Quay lai Menu" << endl;
-                        system("pause");
-                        return;
-                    }
-                    if (id.size() != 14)
-                        cout << "ID can phai co du 14 chu so, vui long nhap lai" << endl;
-                } while (id.size() != 14);
+                SetConsoleTextAttribute(h, 12);
+                cout << "ID nay da ton tai, thuoc ve tai khoan: " << p2->value.getName() << endl;
+                SetConsoleTextAttribute(h, 13);
+                cout << "Vui long nhap ID khac." << endl;
                 break;
             }
             p2 = p2->_pNext;
@@ -812,6 +804,7 @@ Node *dangNhapUser(List &l)
     }
 
     cout << "ID khong ton tai.\n";
+    system("pause");
     return NULL;
 }
 
@@ -1240,7 +1233,7 @@ int main()
             tmp.setKhoa(true);
         if (khoa == "0")
             tmp.setKhoa(false);
-        addCus(DSKhachHang, getNode(tmp));
+        addNode(DSKhachHang, getNode(tmp));
 
         ifstream in4("data/LichSu" + id + ".txt");
         string lsid;
