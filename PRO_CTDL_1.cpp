@@ -703,8 +703,16 @@ void doiMaPin(User &A)
 
 Node *dangNhapUser(List &l)
 {
+    system("cls");
+    HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    SetConsoleTextAttribute(h, 10);
+    cout << "\n\t\t\tDANG NHAP USER\n"
+         << endl;
+
     string id, pin;
-    cout << "Nhap ID: ";
+    SetConsoleTextAttribute(h, 2);
+    cout << "ID: ";
     cin >> id;
 
     Node *p = l._pHead;
